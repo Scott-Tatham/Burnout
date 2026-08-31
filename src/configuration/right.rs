@@ -1,8 +1,27 @@
-use serde::Deserialize;
+/*!
+ * Stores the right prompt configuration.
+ */
+use serde::{Serialize, Deserialize};
 
-#[derive(Deserialize)]
+/**
+ * Stores the right prompt configuration.
+ */
+#[derive(Serialize, Deserialize)]
 pub struct RightConfiguration
 {
-    pub enabled: bool,
-    pub modules: Vec<String>,
+    pub content: Option<String>
+}
+
+/**
+ * Implements the [Default] trait for the right side prompt.
+ */
+impl Default for RightConfiguration
+{
+    fn default() -> Self
+    {
+        Self
+        {
+            content: Some("Right".to_string())
+        }
+    }
 }

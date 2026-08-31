@@ -549,4 +549,5 @@ FodyWeavers.xsd
 
 # End of https://www.toptal.com/developers/gitignore/api/rust,jetbrains,visualstudio,visualstudiocode,notepadpp
 
+.idea/**
 /target

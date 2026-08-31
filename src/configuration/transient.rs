@@ -1,8 +1,27 @@
-use serde::Deserialize;
+/*!
+ * Stores the transient prompt configuration.
+ */
+use serde::{Serialize, Deserialize};
 
-#[derive(Deserialize)]
+/**
+ * Stores the transient prompt configuration.
+ */
+#[derive(Serialize, Deserialize)]
 pub struct TransientConfiguration
 {
-    pub enabled: bool,
-    pub modules: Vec<String>,
+    pub content: Option<String>
+}
+
+/**
+ * Implements the [Default] trait for the transient prompt.
+ */
+impl Default for TransientConfiguration
+{
+    fn default() -> Self
+    {
+        Self
+        {
+            content: Some("Transient".to_string())
+        }
+    }
 }
