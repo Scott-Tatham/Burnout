@@ -2,6 +2,7 @@
  * Handles shell specific functionality.
  */
 mod bash;
+mod git_bash;
 mod zsh;
 mod powershell;
 mod cmd;
@@ -28,6 +29,7 @@ pub fn shell_initialisation(shell: &str)
     match shell
     {
         "bash" => bash::Bash::print_initialisation(),
+        "gitbash" => git_bash::GitBash::print_initialisation(),
         "zsh" => zsh::Zsh::print_initialisation(),
         "powershell" | "pwsh" => powershell::PowerShell::print_initialisation(),
         "cmd" => cmd::Cmd::print_initialisation(),
