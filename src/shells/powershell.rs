@@ -14,6 +14,6 @@ impl Shell for PowerShell
      */
     fn print_initialisation()
     {
-        println!(r#"[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; function global:prompt {{ $host.UI.RawUI.WindowTitle = (& '$HOME\Bin\burnout' 'window-title'); return & '$HOME\Bin\burnout';}}"#);
+        println!(r#"[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; $burnout = (Get-Command burnout).Source; function global:prompt {{ $host.UI.RawUI.WindowTitle = (& $burnout 'window-title'); return & $burnout;}}"#);
     }
 }

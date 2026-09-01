@@ -16,6 +16,6 @@ impl Shell for Bash
      */
     fn print_initialisation()
     {
-        println!(r#"PS1='$($HOME/Bin/burnout)'; RPROMPT='$($HOME/Bin/burnout right)'; PS1_TRANSIENT='$($HOME/Bin/burnout transient)'; RPROMPT_TRANSIENT='$($HOME/Bin/burnout right-transient)'; PROMPT_COMMAND='echo -ne "\033]0;$($HOME/Bin/burnout window-title)\007"'"#);
+        println!(r#"BURNOUT='$(command -v burnout)'; PS1='$($BURNOUT)'; RPROMPT='$($BURNOUT right)'; PS1_TRANSIENT='$($BURNOUT transient)'; RPROMPT_TRANSIENT='$($BURNOUT right-transient)'; PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window-title)\007"'"#);
     }
 }

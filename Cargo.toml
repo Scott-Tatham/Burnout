@@ -1,6 +1,6 @@
 [package]
-name = "Burnout"
-version = "0.0.2"
+name = "burnout"
+version = "0.0.3"
 edition = "2024"
 
 [dependencies]
