@@ -16,6 +16,11 @@ impl Shell for Zsh
      */
     fn print_initialisation()
     {
-        println!(r#"BURNOUT='$(command -v burnout)'; PROMPT='$($BURNOUT)'; RPROMPT='$($BURNOUT right)'; PROMPT_TRANSIENT='$($BURNOUT transient)'; RPROMPT_TRANSIENT='$($BURNOUT right-transient)'; precmd() {{print -Pn '\e]0;$($BURNOUT window-title)\a';}}"#);
+        println!(r#"BURNOUT="$(command -v burnout)";
+        PROMPT="$($BURNOUT)"; \
+        RPROMPT="$($BURNOUT right)"; \
+        PROMPT_TRANSIENT="$($BURNOUT transient)"; \
+        RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
+        precmd() {{print -Pn "\e]0;$($BURNOUT window-title)\a";}}"#);
     }
 }
