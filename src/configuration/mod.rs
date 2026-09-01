@@ -7,6 +7,7 @@ pub mod prompt;
 pub mod transient;
 pub mod right;
 pub mod right_transient;
+pub mod continuation;
 pub mod window_title;
 
 use std::{fs, path};
@@ -52,5 +53,24 @@ fn configuration_path() -> path::PathBuf
     else
     {
         dirs::home_dir().unwrap().join(".burnout.toml")
+    }
+}
+
+/**
+ * Unit tests for the configuration module.
+ */
+#[cfg(test)]
+mod tests
+{
+    use super::*;
+
+    /**
+     * Tests the path of the configuration file is not empty.
+     */
+    #[test]
+    fn test_configuration_path_is_not_empty()
+    {
+        let path = configuration_path();
+        assert!(!path.as_os_str().is_empty());
     }
 }

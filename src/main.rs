@@ -20,6 +20,7 @@ fn main()
         Some("transient") => render::render_transient_prompt(&configuration.transient.unwrap_or_default()),
         Some("right-transient") => render::render_right_transient_prompt(&configuration.right_transient.unwrap_or_default()),
         Some("window-title") => render::render_window_title(&configuration.window_title.unwrap_or_default()),
+        Some("continuation") => render::render_continuation_prompt(&configuration.continuation.unwrap_or_default()),
         _ => render::render_prompt(&configuration.prompt.unwrap_or_default())
     }
 }

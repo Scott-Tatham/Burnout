@@ -21,6 +21,7 @@ impl Shell for Bash
         RPROMPT="$($BURNOUT right)"; \
         PS1_TRANSIENT="$($BURNOUT transient)"; \
         RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
+        PS2="$($BURNOUT continuation)" \
         PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window-title)\007"'"#);
     }
 }

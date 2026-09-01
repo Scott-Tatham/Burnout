@@ -56,6 +56,16 @@ pub fn render_right_transient_prompt(configuration: &right_transient::RightTrans
 }
 
 /**
+ * Renders the right side transient prompt with the specified modules.
+ * # Arguments
+ * * `configuration` - The configuration for the continuation prompt.
+ */
+pub fn render_continuation_prompt(configuration: &continuation::ContinuationConfiguration)
+{
+    println!("{}", &configuration.content.as_deref().unwrap_or_default());
+}
+
+/**
  * Renders the window title with the specified modules.
  * # Arguments
  * * `configuration` - The configuration for the window title.
@@ -63,4 +73,159 @@ pub fn render_right_transient_prompt(configuration: &right_transient::RightTrans
 pub fn render_window_title(configuration: &window_title::WindowTitleConfiguration)
 {
     println!("{}", &configuration.content.as_deref().unwrap_or_default());
+}
+
+#[cfg(test)]
+mod tests
+{
+    use super::*;
+    use prompt::PromptConfiguration;
+    use right::RightConfiguration;
+    use transient::TransientConfiguration;
+    use right_transient::RightTransientConfiguration;
+    use window_title::WindowTitleConfiguration;
+
+    /**
+     * Tests the rendering of the prompt with full content.
+     */
+    #[test]
+    fn test_render_prompt_full_content()
+    {
+        render_prompt(&PromptConfiguration
+        {
+            content: Some("Test Prompt".to_string())
+        });
+    }
+
+    /**
+     * Tests the rendering of the prompt with empty content.
+     */
+    #[test]
+    fn test_render_prompt_empty_content()
+    {
+        render_prompt(&PromptConfiguration
+        {
+            content: None
+        });
+    }
+
+    /**
+     * Tests the rendering of the right prompt with full content.
+     */
+    #[test]
+    fn test_render_right_prompt_full_content()
+    {
+        render_right_prompt(&RightConfiguration
+        {
+            content: Some("Test Right".to_string())
+        });
+    }
+
+    /**
+     * Tests the rendering of the right prompt with empty content.
+     */
+    #[test]
+    fn test_render_right_prompt_empty_content()
+    {
+        render_right_prompt(&RightConfiguration
+        {
+            content: None
+        });
+    }
+
+    /**
+     * Tests the rendering of the transient prompt with full content.
+     */
+    #[test]
+    fn test_render_transient_prompt_full_content()
+    {
+        render_transient_prompt(&TransientConfiguration
+        {
+            content: Some("Test Transient".to_string())
+        });
+    }
+
+    /**
+     * Tests the rendering of the transient prompt with empty content.
+     */
+    #[test]
+    fn test_render_transient_prompt_empty_content()
+    {
+        render_transient_prompt(&TransientConfiguration
+        {
+            content: None
+        });
+    }
+
+    /**
+     * Tests the rendering of the right transient prompt with full content.
+     */
+    #[test]
+    fn test_render_right_transient_prompt_full_content()
+    {
+        render_right_transient_prompt(&RightTransientConfiguration
+        {
+            content: Some("Test Right Transient".to_string())
+        });
+    }
+
+    /**
+     * Tests the rendering of the right transient prompt with empty content.
+     */
+    #[test]
+    fn test_render_right_transient_prompt_empty_content()
+    {
+        render_right_transient_prompt(&RightTransientConfiguration
+        {
+            content: None
+        });
+    }
+
+    /**
+     * Tests the rendering of the right transient prompt with full content.
+     */
+    #[test]
+    fn test_render_continuation_prompt_full_content()
+    {
+        render_right_transient_prompt(&RightTransientConfiguration
+        {
+            content: Some("Test Right Transient".to_string())
+        });
+    }
+
+    /**
+     * Tests the rendering of the right transient prompt with empty content.
+     */
+    #[test]
+    fn test_render_continuation_prompt_empty_content()
+    {
+        render_right_transient_prompt(&RightTransientConfiguration
+        {
+            content: None
+        });
+    }
+
+    /**
+     * Tests the rendering of the window title with full content.
+     */
+    #[test]
+    fn test_render_window_title_full_content()
+    {
+        render_window_title(&WindowTitleConfiguration
+        {
+            content: Some("Test Window Title".to_string())
+        });
+    }
+
+    /**
+     * Tests the rendering of the window title with empty content.
+     */
+    #[test]
+    fn test_render_window_title_empty_content()
+    {
+        render_window_title(&WindowTitleConfiguration
+        {
+            content: None
+        });
+    }
 }
