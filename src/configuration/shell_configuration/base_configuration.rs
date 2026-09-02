@@ -77,7 +77,7 @@ RPROMPT="$($BURNOUT right)"; \\
 PS1_TRANSIENT="$($BURNOUT transient)"; \\
 RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \\
 PS2="$($BURNOUT continuation)" \\
-PROMPT_COMMAND="echo -ne "\\033]0;$($BURNOUT window-title)\\007""
+PROMPT_COMMAND='echo -ne "\\033]0;$($BURNOUT window-title)\\007"'
 '''
 
             [zsh]
@@ -104,7 +104,7 @@ RPROMPT="$($BURNOUT right)"; \\
 PS1_TRANSIENT="$($BURNOUT transient)"; \\
 RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \\
 PS2="$($BURNOUT continuation)" \\
-PROMPT_COMMAND="echo -ne "\\033]0;$($BURNOUT window-title)\\007""
+PROMPT_COMMAND='echo -ne "\\033]0;$($BURNOUT window-title)\\007"'
 '''
 
             [powershell]
@@ -144,7 +144,7 @@ RPROMPT="$($BURNOUT right)"; \\
 PS1_TRANSIENT="$($BURNOUT transient)"; \\
 RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \\
 PS2="$($BURNOUT continuation)" \\
-PROMPT_COMMAND="echo -ne "\\033]0;$($BURNOUT window-title)\\007""
+PROMPT_COMMAND='echo -ne "\\033]0;$($BURNOUT window-title)\\007"'
 "#.to_string()));
         assert_eq!(configuration.zsh.unwrap().setup, Some(r#"autoload -Uz promptinit \\
 promptinit \\
@@ -165,7 +165,7 @@ RPROMPT="$($BURNOUT right)"; \\
 PS1_TRANSIENT="$($BURNOUT transient)"; \\
 RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \\
 PS2="$($BURNOUT continuation)" \\
-PROMPT_COMMAND="echo -ne "\\033]0;$($BURNOUT window-title)\\007""
+PROMPT_COMMAND='echo -ne "\\033]0;$($BURNOUT window-title)\\007"'
 "#.to_string()));
         assert_eq!(configuration.powershell.unwrap().setup, Some(r#"[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; $burnout = (Get-Command burnout).Source; $PSContinuationPrompt = { & $burnout continuation }; function global:prompt { $host.UI.RawUI.WindowTitle = (& $burnout window-title); return & $burnout;}"#.to_string()));
         assert_eq!(configuration.cmd.unwrap().setup, Some(r#"if (clink.version_encoded or 0) < 10020030 then
@@ -209,7 +209,7 @@ RPROMPT="$($BURNOUT right)"; \\
 PS1_TRANSIENT="$($BURNOUT transient)"; \\
 RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \\
 PS2="$($BURNOUT continuation)" \\
-PROMPT_COMMAND="echo -ne "\\033]0;$($BURNOUT window-title)\\007""
+PROMPT_COMMAND='echo -ne "\\033]0;$($BURNOUT window-title)\\007"'
 '''
             "#;
 
@@ -221,7 +221,7 @@ RPROMPT="$($BURNOUT right)"; \\
 PS1_TRANSIENT="$($BURNOUT transient)"; \\
 RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \\
 PS2="$($BURNOUT continuation)" \\
-PROMPT_COMMAND="echo -ne "\\033]0;$($BURNOUT window-title)\\007""
+PROMPT_COMMAND='echo -ne "\\033]0;$($BURNOUT window-title)\\007"'
 "#.to_string()));
         assert!(configuration.zsh.is_none());
         assert!(configuration.git_bash.is_none());

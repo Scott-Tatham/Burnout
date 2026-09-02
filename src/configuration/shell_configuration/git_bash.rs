@@ -22,12 +22,12 @@ impl Default for GitBashConfiguration
         Self
         {
             setup: Some(r#"BURNOUT=$(command -v burnout.exe); \
-        PS1="$($BURNOUT)"; \
+        PS1=$($BURNOUT); \
         RPROMPT="$($BURNOUT right)"; \
         PS1_TRANSIENT="$($BURNOUT transient)"; \
         RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
         PS2="$($BURNOUT continuation)" \
-        PROMPT_COMMAND="echo -ne "\033]0;$($BURNOUT window-title)\007"""#.to_string())
+        PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window-title)\007"'"#.to_string())
         }
     }
 }
@@ -49,12 +49,12 @@ mod tests
         let configuration = GitBashConfiguration::default();
 
         assert_eq!(configuration.setup, Some(r#"BURNOUT=$(command -v burnout.exe); \
-        PS1="$($BURNOUT)"; \
+        PS1=$($BURNOUT); \
         RPROMPT="$($BURNOUT right)"; \
         PS1_TRANSIENT="$($BURNOUT transient)"; \
         RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
         PS2="$($BURNOUT continuation)" \
-        PROMPT_COMMAND="echo -ne "\033]0;$($BURNOUT window-title)\007"""#.to_string()));
+        PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window-title)\007"'"#.to_string()));
     }
 
     /**
@@ -71,7 +71,7 @@ mod tests
         PS1_TRANSIENT="$($BURNOUT transient)"; \
         RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
         PS2="$($BURNOUT continuation)" \
-        PROMPT_COMMAND="echo -ne "\033]0;$($BURNOUT window-title)\007"""#.to_string())
+        PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window-title)\007"'"#.to_string())
         };
 
         let deserialised: GitBashConfiguration = toml::from_str(&toml::to_string(&configuration).expect("Failed to serialise the full configuration.")).expect("Failed to deserialise the full configuration.");

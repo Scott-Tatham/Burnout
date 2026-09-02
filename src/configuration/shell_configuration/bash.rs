@@ -27,7 +27,7 @@ impl Default for BashConfiguration
             PS1_TRANSIENT="$($BURNOUT transient)"; \
             RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
             PS2="$($BURNOUT continuation)" \
-            PROMPT_COMMAND="echo -ne "\033]0;$($BURNOUT window-title)\007"""#.to_string())
+            PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window-title)\007"'"#.to_string())
         }
     }
 }
@@ -54,7 +54,7 @@ mod tests
             PS1_TRANSIENT="$($BURNOUT transient)"; \
             RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
             PS2="$($BURNOUT continuation)" \
-            PROMPT_COMMAND="echo -ne "\033]0;$($BURNOUT window-title)\007"""#.to_string()));
+            PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window-title)\007"'"#.to_string()));
     }
 
     /**
