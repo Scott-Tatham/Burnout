@@ -1,6 +1,9 @@
 /*!
  * Handles shell specific functionality.
  */
+
+use crate::configuration::shell_configuration;
+
 mod bash;
 mod git_bash;
 mod zsh;
@@ -15,8 +18,10 @@ pub trait Shell
     /**
      * Prints the prompt initialisation code for the shell.
      * By printing the initialisation, it sets the prompt for that session.
+     * # Arguments
+     * * `configuration` - The configuration for shells.
      */
-    fn print_initialisation();
+    fn print_initialisation(configuration: shell_configuration::base_configuration::BaseConfiguration);
 }
 
 /**
@@ -26,13 +31,15 @@ pub trait Shell
  */
 pub fn shell_initialisation(shell: &str)
 {
+    let configuration = shell_configuration::load_or_create_configuration();
+
     match shell
     {
-        "bash" => bash::Bash::print_initialisation(),
-        "gitbash" => git_bash::GitBash::print_initialisation(),
-        "zsh" => zsh::Zsh::print_initialisation(),
-        "powershell" | "pwsh" => powershell::PowerShell::print_initialisation(),
-        "cmd" => cmd::Cmd::print_initialisation(),
+        "bash" => bash::Bash::print_initialisation(configuration),
+        "gitbash" => git_bash::GitBash::print_initialisation(configuration),
+        "zsh" => zsh::Zsh::print_initialisation(configuration),
+        "powershell" | "pwsh" => powershell::PowerShell::print_initialisation(configuration),
+        "cmd" => cmd::Cmd::print_initialisation(configuration),
         _ => eprintln!("Unsupported shell: {}", shell),
     }
 }

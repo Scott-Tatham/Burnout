@@ -13,7 +13,7 @@ pub struct RightTransientConfiguration
 }
 
 /**
- * Implements the [Default] trait for the right transient prompt.
+ * Implements the [Default] trait for the right transient prompt configuration.
  */
 impl Default for RightTransientConfiguration
 {
@@ -46,7 +46,7 @@ mod tests
     }
 
     /**
-     * Tests the serialisation and deserialisation of the right transient prompt configuration as TOML.
+     * Tests the serialisation and deserialisation of the full right transient prompt configuration as TOML.
      */
     #[test]
     fn test_toml_serialisation_and_deserialisation_full_configuration()

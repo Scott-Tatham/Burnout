@@ -1,19 +1,13 @@
 /*!
  * Stores the base configuration.
  */
-use serde::{Serialize, Deserialize};
-use crate::
-{
-    configuration::
-    {
-        prompt::PromptConfiguration,
-        right::RightConfiguration,
-        transient::TransientConfiguration,
-        right_transient::RightTransientConfiguration,
-        continuation::ContinuationConfiguration,
-        window_title::WindowTitleConfiguration
-    }
-};
+use super::continuation::ContinuationConfiguration;
+use super::prompt::PromptConfiguration;
+use super::right::RightConfiguration;
+use super::right_transient::RightTransientConfiguration;
+use super::transient::TransientConfiguration;
+use super::window_title::WindowTitleConfiguration;
+use serde::{Deserialize, Serialize};
 
 /**
  * Stores the base configuration.
@@ -79,21 +73,27 @@ mod tests
     fn test_toml_deserialisation_full_configuration()
     {
         let configuration: BaseConfiguration = toml::from_str(r#"
+            # Configuration for the prompt.
             [prompt]
             content = "Test Prompt"
 
+            # Configuration for the right prompt.
             [right]
             content = "Test Right"
 
+            # Configuration for the transient prompt.
             [transient]
             content = "Test Transient"
 
+            # Configuration for the right transient prompt.
             [right_transient]
             content = "Test Right Transient"
-            
+
+            # Configuration for the continuation prompt.
             [continuation]
             content = "Test Continuation"
 
+            # Configuration for the window title.
             [window_title]
             content = "Test Window Title"
         "#).expect("Failed to parse valid TOML.");
@@ -113,6 +113,7 @@ mod tests
     fn test_toml_deserialisation_partial_configuration()
     {
         let toml_string = r#"
+            # Configuration for the prompt.
             [prompt]
             content = "Test Prompt"
         "#;

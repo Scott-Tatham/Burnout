@@ -13,7 +13,7 @@ pub struct PromptConfiguration
 }
 
 /**
- * Implements the [Default] trait for the prompt.
+ * Implements the [Default] trait for the prompt configuration.
  */
 impl Default for PromptConfiguration
 {
@@ -46,7 +46,7 @@ mod tests
     }
 
     /**
-     * Tests the serialisation and deserialisation of the prompt configuration as TOML.
+     * Tests the serialisation and deserialisation of the full prompt configuration as TOML.
      */
     #[test]
     fn test_toml_serialisation_and_deserialisation_full_configuration()

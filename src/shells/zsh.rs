@@ -1,6 +1,8 @@
 /*!
  * Handles Zsh specific functionality.
  */
+
+use crate::configuration::shell_configuration;
 use super::Shell;
 
 pub struct Zsh;
@@ -13,20 +15,11 @@ impl Shell for Zsh
     /**
      * Prints the prompt initialisation code for Zsh.
      * By printing the initialisation, it sets the prompt for that session.
+     * # Arguments
+     * * `configuration` - The configuration for shells.
      */
-    fn print_initialisation()
+    fn print_initialisation(configuration: shell_configuration::base_configuration::BaseConfiguration)
     {
-        println!(r#"autoload -Uz promptinit \
-        promptinit \
-        prompt transient \
-        setopt transient_rprompt \
-        BURNOUT="$(command -v burnout)"; \
-		PROMPT="$($BURNOUT)"; \
-        RPROMPT="$($BURNOUT right)"; \
-        PROMPT_TRANSIENT="$($BURNOUT transient)"; \
-        RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
-        PS2="$($BURNOUT continuation)" \
-        precmd_functions+=(set_window_title); \
-		function set_window_title(){{echo -ne "\033]0;$($BURNOUT window-title)\007"}}"#);
+        println!("{}", &configuration.zsh.unwrap_or_default().setup.as_deref().unwrap_or_default());
     }
 }

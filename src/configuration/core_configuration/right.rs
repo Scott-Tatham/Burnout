@@ -13,7 +13,7 @@ pub struct RightConfiguration
 }
 
 /**
- * Implements the [Default] trait for the right prompt.
+ * Implements the [Default] trait for the right prompt configuration.
  */
 impl Default for RightConfiguration
 {
@@ -46,7 +46,7 @@ mod tests
     }
 
     /**
-     * Tests the serialisation and deserialisation of the right prompt configuration as TOML.
+     * Tests the serialisation and deserialisation of the full right prompt configuration as TOML.
      */
     #[test]
     fn test_toml_serialisation_and_deserialisation_full_configuration()

@@ -13,7 +13,7 @@ pub struct ContinuationConfiguration
 }
 
 /**
- * Implements the [Default] trait for the continuation prompt.
+ * Implements the [Default] trait for the continuation configuration.
  */
 impl Default for ContinuationConfiguration
 {
@@ -46,7 +46,7 @@ mod tests
     }
 
     /**
-     * Tests the serialisation and deserialisation of the continuation prompt configuration as TOML.
+     * Tests the serialisation and deserialisation of the full continuation prompt configuration as TOML.
      */
     #[test]
     fn test_toml_serialisation_and_deserialisation_full_configuration()

@@ -11,7 +11,7 @@ pub mod configuration;
 fn main()
 {
     let arguments: Vec<String> = env::args().collect();
-    let configuration = configuration::load_or_create_configuration();
+    let configuration = configuration::core_configuration::load_or_create_configuration();
 
     match arguments.get(1).map(|value| value.as_str())
     {

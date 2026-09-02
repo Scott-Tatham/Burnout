@@ -2,7 +2,7 @@
  * Handles rendering of the prompt.
  */
 
-use crate::configuration::*;
+use crate::configuration::core_configuration::{prompt, right, transient, right_transient, continuation, window_title};
 
 /**
  * Defines the implementation of a module.
@@ -79,11 +79,11 @@ pub fn render_window_title(configuration: &window_title::WindowTitleConfiguratio
 mod tests
 {
     use super::*;
-    use prompt::PromptConfiguration;
-    use right::RightConfiguration;
-    use transient::TransientConfiguration;
-    use right_transient::RightTransientConfiguration;
-    use window_title::WindowTitleConfiguration;
+    use crate::configuration::core_configuration::prompt::PromptConfiguration;
+    use crate::configuration::core_configuration::right::RightConfiguration;
+    use crate::configuration::core_configuration::right_transient::RightTransientConfiguration;
+    use crate::configuration::core_configuration::transient::TransientConfiguration;
+    use crate::configuration::core_configuration::window_title::WindowTitleConfiguration;
 
     /**
      * Tests the rendering of the prompt with full content.

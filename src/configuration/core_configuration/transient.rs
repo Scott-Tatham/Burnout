@@ -13,7 +13,7 @@ pub struct TransientConfiguration
 }
 
 /**
- * Implements the [Default] trait for the transient prompt.
+ * Implements the [Default] trait for the transient prompt configuration.
  */
 impl Default for TransientConfiguration
 {
@@ -46,7 +46,7 @@ mod tests
     }
 
     /**
-     * Tests the serialisation and deserialisation of the transient prompt configuration as TOML.
+     * Tests the serialisation and deserialisation of the full transient prompt configuration as TOML.
      */
     #[test]
     fn test_toml_serialisation_and_deserialisation_full_configuration()

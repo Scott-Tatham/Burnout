@@ -13,7 +13,7 @@ pub struct WindowTitleConfiguration
 }
 
 /**
- * Implements the [Default] trait for the window title.
+ * Implements the [Default] trait for the window title configuration.
  */
 impl Default for WindowTitleConfiguration
 {
@@ -46,7 +46,7 @@ mod tests
     }
 
     /**
-     * Tests the serialisation and deserialisation of the window title configuration as TOML.
+     * Tests the serialisation and deserialisation of the full window title configuration as TOML.
      */
     #[test]
     fn test_toml_serialisation_and_deserialisation_full_configuration()
