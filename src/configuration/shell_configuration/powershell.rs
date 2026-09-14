@@ -6,7 +6,7 @@ use serde::{Serialize, Deserialize};
 /**
  * Stores the PowerShell shell configuration.
  */
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct PowerShellConfiguration
 {
     pub setup: Option<String>
@@ -35,7 +35,7 @@ mod tests
     use super::*;
 
     /**
-     * Tests the default values for PowerShell shell configuration are correct.
+     * Tests the default values for the configuration are correct.
      */
     #[test]
     fn test_default_values_are_correct()
@@ -46,34 +46,68 @@ mod tests
     }
 
     /**
-     * Tests the serialisation and deserialisation of the full PowerShell shell configuration as TOML.
+     * Tests the deserialisation of an empty configuration as YAML.
      */
     #[test]
-    fn test_toml_serialisation_and_deserialisation_full_configuration()
+    fn test_yaml_deserialisation_empty_configuration()
     {
-        let configuration = PowerShellConfiguration
-        {
-            setup: Some(r#"[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; $burnout = (Get-Command burnout).Source; $PSContinuationPrompt = { & $burnout continuation }; function global:prompt { $host.UI.RawUI.WindowTitle = (& $burnout window-title); return & $burnout;}"#.to_string())
-        };
+        let configuration: PowerShellConfiguration = yaml_serde::from_str(String::default().as_str()).expect("Failed to deserialise the empty configuration.");
 
-        let deserialised: PowerShellConfiguration = toml::from_str(&toml::to_string(&configuration).expect("Failed to serialise the full configuration.")).expect("Failed to deserialise the full configuration.");
-
-        assert_eq!(configuration.setup, deserialised.setup);
+        assert!(configuration.setup.is_none());
     }
 
     /**
-     * Tests the serialisation and deserialisation of an empty PowerShell shell configuration as TOML.
+     * Tests the deserialisation of a full configuration as YAML.
      */
     #[test]
-    fn test_toml_serialisation_and_deserialisation_empty_configuration()
+    fn test_yaml_deserialisation_full_configuration()
+    {
+        let configuration: PowerShellConfiguration = yaml_serde::from_str(r#"[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; $burnout = (Get-Command burnout).Source; $PSContinuationPrompt = { & $burnout continuation }; function global:prompt { $host.UI.RawUI.WindowTitle = (& $burnout window-title); return & $burnout;}"#).expect("Failed to deserialise the full configuration.");
+
+        assert_eq!(configuration.setup, Some(r#"[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; $burnout = (Get-Command burnout).Source; $PSContinuationPrompt = { & $burnout continuation }; function global:prompt { $host.UI.RawUI.WindowTitle = (& $burnout window-title); return & $burnout;}"#.to_string()));
+    }
+
+    /**
+     * Tests the serialisation and deserialisation of an empty configuration as YAML.
+     */
+    #[test]
+    fn test_yaml_serialisation_and_deserialisation_empty_configuration()
     {
         let configuration = PowerShellConfiguration
         {
             setup: None
         };
 
-        let deserialised: PowerShellConfiguration = toml::from_str(&toml::to_string(&configuration).expect("Failed to serialise the empty configuration.")).expect("Failed to deserialise the empty configuration.");
+        let deserialised: PowerShellConfiguration = yaml_serde::from_str(&yaml_serde::to_string(&configuration).expect("Failed to serialise the empty configuration.")).expect("Failed to deserialise the empty configuration.");
 
         assert!(deserialised.setup.is_none());
+    }
+
+    /**
+     * Tests the serialisation and deserialisation of a default configuration as YAML.
+     */
+    #[test]
+    fn test_yaml_serialisation_and_deserialisation_default_configuration()
+    {
+        let configuration = PowerShellConfiguration::default();
+        let deserialised: PowerShellConfiguration = yaml_serde::from_str(&yaml_serde::to_string(&configuration).expect("Failed to serialise the default configuration.")).expect("Failed to deserialise the default configuration.");
+
+        assert_eq!(configuration.setup, deserialised.setup);
+    }
+
+    /**
+     * Tests the serialisation and deserialisation of a full configuration as YAML.
+     */
+    #[test]
+    fn test_yaml_serialisation_and_deserialisation_full_configuration()
+    {
+        let configuration = PowerShellConfiguration
+        {
+            setup: Some(r#"[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; $burnout = (Get-Command burnout).Source; $PSContinuationPrompt = { & $burnout continuation }; function global:prompt { $host.UI.RawUI.WindowTitle = (& $burnout window-title); return & $burnout;}"#.to_string())
+        };
+
+        let deserialised: PowerShellConfiguration = yaml_serde::from_str(&yaml_serde::to_string(&configuration).expect("Failed to serialise the full configuration.")).expect("Failed to deserialise the full configuration.");
+
+        assert_eq!(configuration.setup, deserialised.setup);
     }
 }

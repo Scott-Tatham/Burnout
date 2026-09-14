@@ -1,12 +1,11 @@
 /*!
  * Handles the initialisation of the shell.
  */
-
 use crate::configuration::shell_configuration;
 
 mod bash;
-mod git_bash;
 mod zsh;
+mod git_bash;
 mod powershell;
 mod cmd;
 
@@ -40,6 +39,6 @@ pub fn shell_initialisation(shell: &str)
         "zsh" => zsh::Zsh::print_initialisation(configuration),
         "powershell" | "pwsh" => powershell::PowerShell::print_initialisation(configuration),
         "cmd" => cmd::Cmd::print_initialisation(configuration),
-        _ => eprintln!("Unsupported shell: {}", shell)
+        _ => eprintln!("Unsupported shell for initialisation: {}", shell)
     }
 }

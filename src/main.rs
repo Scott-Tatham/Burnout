@@ -10,11 +10,20 @@ pub mod render;
 fn main()
 {
     let arguments: Vec<String> = env::args().collect();
-    let argument = arguments.get(1).map(|value| value.as_str());
 
-    match argument
+    if arguments.len() == 1
     {
-        Some("initialise") => initialisation::shell_initialisation(arguments.get(2).map(|value| value.as_str()).unwrap_or("bash")),
-        _ => render::render_display(argument.unwrap_or("prompt"))
+        render::render_display("prompt", "bash");
+
+        return;
+    }
+
+    let command = arguments.get(1).map(|value| value.as_str()).unwrap_or("prompt");
+    let shell = arguments.get(2).map(|value| value.as_str()).unwrap_or("bash");
+
+    match command
+    {
+        "initialise" => initialisation::shell_initialisation(shell),
+        _ => render::render_display(command, shell)
     }
 }

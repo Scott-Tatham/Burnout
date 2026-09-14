@@ -1,11 +1,10 @@
 /*!
  * Handles the initialisation of the Git Bash shell.
  */
+pub struct GitBash;
 
 use crate::configuration::shell_configuration;
 use super::Shell;
-
-pub struct GitBash;
 
 /**
  * Implements the [Shell] trait for the Git Bash shell.

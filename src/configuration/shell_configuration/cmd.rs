@@ -6,7 +6,7 @@ use serde::{Serialize, Deserialize};
 /**
  * Stores the Cmd shell configuration.
  */
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct CmdConfiguration
 {
     pub setup: Option<String>
@@ -22,28 +22,28 @@ impl Default for CmdConfiguration
         Self
         {
             setup: Some(r#"if (clink.version_encoded or 0) < 10020030 then
-        error("Burnout requires Clink v1.2.30 or later.")
-        end
-        local prompt = clink.promptfilter(1)
-        function prompt:filter(prompt)
-        set_title(prompt)
-        return io.popen("burnout"):read("*a")
-        end
-        function prompt:rightfilter(prompt)
-        return io.popen("burnout right"):read("*a")
-        end
-        function prompt:transientfilter(prompt)
-        return io.popen("burnout transient"):read("*a")
-        end
-        function prompt:transientrightfilter(prompt)
-        return io.popen("burnout right-transient"):read("*a")
-        end
-        function set_title(prompt)
-        local title = io.popen("burnout window-title"):read("*a")
-        if title ~= nil then
-        console.settitle(title)
-        end
-        end"#.to_string())
+error("Burnout requires Clink v1.2.30 or later.")
+end
+local prompt = clink.promptfilter(1)
+function prompt:filter(prompt)
+set_title(prompt)
+return io.popen("burnout"):read("*a")
+end
+function prompt:rightfilter(prompt)
+return io.popen("burnout right"):read("*a")
+end
+function prompt:transientfilter(prompt)
+return io.popen("burnout transient"):read("*a")
+end
+function prompt:transientrightfilter(prompt)
+return io.popen("burnout right-transient"):read("*a")
+end
+function set_title(prompt)
+local title = io.popen("burnout window-title"):read("*a")
+if title ~= nil then
+console.settitle(title)
+end
+end"#.to_string())
         }
     }
 }
@@ -54,10 +54,11 @@ impl Default for CmdConfiguration
 #[cfg(test)]
 mod tests
 {
+    use crate::configuration::shell_configuration::bash::BashConfiguration;
     use super::*;
 
     /**
-     * Tests the default values for Cmd shell configuration are correct.
+     * Tests the default values for the configuration are correct.
      */
     #[test]
     fn test_default_values_are_correct()
@@ -65,82 +66,159 @@ mod tests
         let configuration = CmdConfiguration::default();
 
         assert_eq!(configuration.setup, Some(r#"if (clink.version_encoded or 0) < 10020030 then
-        error("Burnout requires Clink v1.2.30 or later.")
-        end
-        local prompt = clink.promptfilter(1)
-        function prompt:filter(prompt)
-        set_title(prompt)
-        return io.popen("burnout"):read("*a")
-        end
-        function prompt:rightfilter(prompt)
-        return io.popen("burnout right"):read("*a")
-        end
-        function prompt:transientfilter(prompt)
-        return io.popen("burnout transient"):read("*a")
-        end
-        function prompt:transientrightfilter(prompt)
-        return io.popen("burnout right-transient"):read("*a")
-        end
-        function set_title(prompt)
-        local title = io.popen("burnout window-title"):read("*a")
-        if title ~= nil then
-        console.settitle(title)
-        end
-        end"#.to_string()));
+error("Burnout requires Clink v1.2.30 or later.")
+end
+local prompt = clink.promptfilter(1)
+function prompt:filter(prompt)
+set_title(prompt)
+return io.popen("burnout"):read("*a")
+end
+function prompt:rightfilter(prompt)
+return io.popen("burnout right"):read("*a")
+end
+function prompt:transientfilter(prompt)
+return io.popen("burnout transient"):read("*a")
+end
+function prompt:transientrightfilter(prompt)
+return io.popen("burnout right-transient"):read("*a")
+end
+function set_title(prompt)
+local title = io.popen("burnout window-title"):read("*a")
+if title ~= nil then
+console.settitle(title)
+end
+end"#.to_string()));
     }
 
     /**
-     * Tests the serialisation and deserialisation of the full Cmd shell configuration as TOML.
+     * Tests the deserialisation of an empty configuration as YAML.
      */
     #[test]
-    fn test_toml_serialisation_and_deserialisation_full_configuration()
+    fn test_yaml_deserialisation_empty_configuration()
     {
-        let configuration = CmdConfiguration
-        {
-            setup: Some(r#"
-        if (clink.version_encoded or 0) < 10020030 then
-        error("Burnout requires Clink v1.2.30 or later.")
-        end
-        local prompt = clink.promptfilter(1)
-        function prompt:filter(prompt)
-        set_title(prompt)
-        return io.popen("burnout"):read("*a")
-        end
-        function prompt:rightfilter(prompt)
-        return io.popen("burnout right"):read("*a")
-        end
-        function prompt:transientfilter(prompt)
-        return io.popen("burnout transient"):read("*a")
-        end
-        function prompt:transientrightfilter(prompt)
-        return io.popen("burnout right-transient"):read("*a")
-        end
-        function set_title(prompt)
-        local title = io.popen("burnout window-title"):read("*a")
-        if title ~= nil then
-        console.settitle(title)
-        end
-        end"#.to_string())
-        };
+        let configuration: CmdConfiguration = yaml_serde::from_str(String::default().as_str()).expect("Failed to deserialise the empty configuration.");
 
-        let deserialised: CmdConfiguration = toml::from_str(&toml::to_string(&configuration).expect("Failed to serialise the full configuration.")).expect("Failed to deserialise the full configuration.");
-
-        assert_eq!(configuration.setup, deserialised.setup);
+        assert!(configuration.setup.is_none());
     }
 
     /**
-     * Tests the serialisation and deserialisation of an empty Cmd shell configuration as TOML.
+     * Tests the deserialisation of a full configuration as YAML.
      */
     #[test]
-    fn test_toml_serialisation_and_deserialisation_empty_configuration()
+    fn test_yaml_deserialisation_full_configuration()
+    {
+        let configuration: CmdConfiguration = yaml_serde::from_str(r#"if (clink.version_encoded or 0) < 10020030 then
+error("Burnout requires Clink v1.2.30 or later.")
+end
+local prompt = clink.promptfilter(1)
+function prompt:filter(prompt)
+set_title(prompt)
+return io.popen("burnout"):read("*a")
+end
+function prompt:rightfilter(prompt)
+return io.popen("burnout right"):read("*a")
+end
+function prompt:transientfilter(prompt)
+return io.popen("burnout transient"):read("*a")
+end
+function prompt:transientrightfilter(prompt)
+return io.popen("burnout right-transient"):read("*a")
+end
+function set_title(prompt)
+local title = io.popen("burnout window-title"):read("*a")
+if title ~= nil then
+console.settitle(title)
+end
+end"#).expect("Failed to deserialise the full configuration.");
+
+        assert_eq!(configuration.setup, Some(r#"if (clink.version_encoded or 0) < 10020030 then
+error("Burnout requires Clink v1.2.30 or later.")
+end
+local prompt = clink.promptfilter(1)
+function prompt:filter(prompt)
+set_title(prompt)
+return io.popen("burnout"):read("*a")
+end
+function prompt:rightfilter(prompt)
+return io.popen("burnout right"):read("*a")
+end
+function prompt:transientfilter(prompt)
+return io.popen("burnout transient"):read("*a")
+end
+function prompt:transientrightfilter(prompt)
+return io.popen("burnout right-transient"):read("*a")
+end
+function set_title(prompt)
+local title = io.popen("burnout window-title"):read("*a")
+if title ~= nil then
+console.settitle(title)
+end
+end"#.to_string()));
+    }
+
+    /**
+     * Tests the serialisation and deserialisation of an empty configuration as YAML.
+     */
+    #[test]
+    fn test_yaml_serialisation_and_deserialisation_empty_configuration()
     {
         let configuration = CmdConfiguration
         {
             setup: None
         };
 
-        let deserialised: CmdConfiguration = toml::from_str(&toml::to_string(&configuration).expect("Failed to serialise the empty configuration.")).expect("Failed to deserialise the empty configuration.");
+        let deserialised: CmdConfiguration = yaml_serde::from_str(&yaml_serde::to_string(&configuration).expect("Failed to serialise the empty configuration.")).expect("Failed to deserialise the empty configuration.");
 
         assert!(deserialised.setup.is_none());
+    }
+
+    /**
+     * Tests the serialisation and deserialisation of a default configuration as YAML.
+     */
+    #[test]
+    fn test_yaml_serialisation_and_deserialisation_default_configuration()
+    {
+        let configuration = CmdConfiguration::default();
+        let deserialised: CmdConfiguration = yaml_serde::from_str(&yaml_serde::to_string(&configuration).expect("Failed to serialise the default configuration.")).expect("Failed to deserialise the default configuration.");
+
+        assert_eq!(configuration.setup, deserialised.setup);
+    }
+
+    /**
+     * Tests the serialisation and deserialisation of a full configuration as YAML.
+     */
+    #[test]
+    fn test_yaml_serialisation_and_deserialisation_full_configuration()
+    {
+        let configuration = CmdConfiguration
+        {
+            setup: Some(r#"if (clink.version_encoded or 0) < 10020030 then
+error("Burnout requires Clink v1.2.30 or later.")
+end
+local prompt = clink.promptfilter(1)
+function prompt:filter(prompt)
+set_title(prompt)
+return io.popen("burnout"):read("*a")
+end
+function prompt:rightfilter(prompt)
+return io.popen("burnout right"):read("*a")
+end
+function prompt:transientfilter(prompt)
+return io.popen("burnout transient"):read("*a")
+end
+function prompt:transientrightfilter(prompt)
+return io.popen("burnout right-transient"):read("*a")
+end
+function set_title(prompt)
+local title = io.popen("burnout window-title"):read("*a")
+if title ~= nil then
+console.settitle(title)
+end
+end"#.to_string())
+        };
+
+        let deserialised: CmdConfiguration = yaml_serde::from_str(&yaml_serde::to_string(&configuration).expect("Failed to serialise the full configuration.")).expect("Failed to deserialise the full configuration.");
+
+        assert_eq!(configuration.setup, deserialised.setup);
     }
 }

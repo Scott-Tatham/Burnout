@@ -1,11 +1,10 @@
 /*!
  * Handles the initialisation of the Zsh shell.
  */
+pub struct Zsh;
 
 use crate::configuration::shell_configuration;
 use super::Shell;
-
-pub struct Zsh;
 
 /**
  * Implements the [Shell] trait for the Zsh shell.

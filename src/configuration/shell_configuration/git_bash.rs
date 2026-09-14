@@ -6,7 +6,7 @@ use serde::{Serialize, Deserialize};
 /**
  * Stores the Git Bash shell configuration.
  */
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct GitBashConfiguration
 {
     pub setup: Option<String>
@@ -22,12 +22,12 @@ impl Default for GitBashConfiguration
         Self
         {
             setup: Some(r#"BURNOUT=$(command -v burnout.exe); \
-        PS1=$($BURNOUT); \
-        RPROMPT="$($BURNOUT right)"; \
-        PS1_TRANSIENT="$($BURNOUT transient)"; \
-        RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
-        PS2="$($BURNOUT continuation)" \
-        PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window-title)\007"'"#.to_string())
+PS1=$($BURNOUT); \
+RPROMPT="$($BURNOUT right)"; \
+PS1_TRANSIENT="$($BURNOUT transient)"; \
+RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
+PS2="$($BURNOUT continuation)" \
+PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window-title)\007"'"#.to_string())
         }
     }
 }
@@ -41,7 +41,7 @@ mod tests
     use super::*;
 
     /**
-     * Tests the default values for Cmd shell configuration are correct.
+     * Tests the default values for the configuration are correct.
      */
     #[test]
     fn test_default_values_are_correct()
@@ -49,49 +49,95 @@ mod tests
         let configuration = GitBashConfiguration::default();
 
         assert_eq!(configuration.setup, Some(r#"BURNOUT=$(command -v burnout.exe); \
-        PS1=$($BURNOUT); \
-        RPROMPT="$($BURNOUT right)"; \
-        PS1_TRANSIENT="$($BURNOUT transient)"; \
-        RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
-        PS2="$($BURNOUT continuation)" \
-        PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window-title)\007"'"#.to_string()));
+PS1=$($BURNOUT); \
+RPROMPT="$($BURNOUT right)"; \
+PS1_TRANSIENT="$($BURNOUT transient)"; \
+RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
+PS2="$($BURNOUT continuation)" \
+PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window-title)\007"'"#.to_string()));
     }
 
     /**
-     * Tests the serialisation and deserialisation of the full Git Bash shell configuration as TOML.
+     * Tests the deserialisation of an empty configuration as YAML.
      */
     #[test]
-    fn test_toml_serialisation_and_deserialisation_full_configuration()
+    fn test_yaml_deserialisation_empty_configuration()
     {
-        let configuration = GitBashConfiguration
-        {
-            setup: Some(r#"BURNOUT=$(command -v burnout.exe); \
-        PS1="$($BURNOUT)"; \
-        RPROMPT="$($BURNOUT right)"; \
-        PS1_TRANSIENT="$($BURNOUT transient)"; \
-        RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
-        PS2="$($BURNOUT continuation)" \
-        PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window-title)\007"'"#.to_string())
-        };
+        let configuration: GitBashConfiguration = yaml_serde::from_str(String::default().as_str()).expect("Failed to deserialise the empty configuration.");
 
-        let deserialised: GitBashConfiguration = toml::from_str(&toml::to_string(&configuration).expect("Failed to serialise the full configuration.")).expect("Failed to deserialise the full configuration.");
-
-        assert_eq!(configuration.setup, deserialised.setup);
+        assert!(configuration.setup.is_none());
     }
 
     /**
-     * Tests the serialisation and deserialisation of an empty Git Bash shell configuration as TOML.
+     * Tests the deserialisation of a full configuration as YAML.
      */
     #[test]
-    fn test_toml_serialisation_and_deserialisation_empty_configuration()
+    fn test_yaml_deserialisation_full_configuration()
+    {
+        let configuration: GitBashConfiguration = yaml_serde::from_str(r#"BURNOUT=$(command -v burnout.exe); \
+PS1=$($BURNOUT); \
+RPROMPT="$($BURNOUT right)"; \
+PS1_TRANSIENT="$($BURNOUT transient)"; \
+RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
+PS2="$($BURNOUT continuation)" \
+PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window-title)\007"'"#).expect("Failed to deserialise the full configuration.");
+
+        assert_eq!(configuration.setup, Some(r#"BURNOUT=$(command -v burnout.exe); \
+PS1=$($BURNOUT); \
+RPROMPT="$($BURNOUT right)"; \
+PS1_TRANSIENT="$($BURNOUT transient)"; \
+RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
+PS2="$($BURNOUT continuation)" \
+PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window-title)\007"'"#.to_string()));
+    }
+
+    /**
+     * Tests the serialisation and deserialisation of an empty configuration as YAML.
+     */
+    #[test]
+    fn test_yaml_serialisation_and_deserialisation_empty_configuration()
     {
         let configuration = GitBashConfiguration
         {
             setup: None
         };
 
-        let deserialised: GitBashConfiguration = toml::from_str(&toml::to_string(&configuration).expect("Failed to serialise the empty configuration.")).expect("Failed to deserialise the empty configuration.");
+        let deserialised: GitBashConfiguration = yaml_serde::from_str(&yaml_serde::to_string(&configuration).expect("Failed to serialise the empty configuration.")).expect("Failed to deserialise the empty configuration.");
 
         assert!(deserialised.setup.is_none());
+    }
+
+    /**
+     * Tests the serialisation and deserialisation of a default configuration as YAML.
+     */
+    #[test]
+    fn test_yaml_serialisation_and_deserialisation_default_configuration()
+    {
+        let configuration = GitBashConfiguration::default();
+        let deserialised: GitBashConfiguration = yaml_serde::from_str(&yaml_serde::to_string(&configuration).expect("Failed to serialise the default configuration.")).expect("Failed to deserialise the default configuration.");
+
+        assert_eq!(configuration.setup, deserialised.setup);
+    }
+
+    /**
+     * Tests the serialisation and deserialisation of a full configuration as YAML.
+     */
+    #[test]
+    fn test_yaml_serialisation_and_deserialisation_full_configuration()
+    {
+        let configuration = GitBashConfiguration
+        {
+            setup: Some(r#"BURNOUT=$(command -v burnout.exe); \
+PS1=$($BURNOUT); \
+RPROMPT="$($BURNOUT right)"; \
+PS1_TRANSIENT="$($BURNOUT transient)"; \
+RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
+PS2="$($BURNOUT continuation)" \
+PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window-title)\007"'"#.to_string())
+        };
+
+        let deserialised: GitBashConfiguration = yaml_serde::from_str(&yaml_serde::to_string(&configuration).expect("Failed to serialise the full configuration.")).expect("Failed to deserialise the full configuration.");
+
+        assert_eq!(configuration.setup, deserialised.setup);
     }
 }

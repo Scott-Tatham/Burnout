@@ -1,14 +1,14 @@
 /*!
  * Handles the core configuration of Burnout.
  */
-
 pub mod base_configuration;
-pub mod prompt;
-pub mod transient;
-pub mod right;
-pub mod right_transient;
-pub mod continuation;
-pub mod window_title;
+mod condition;
+mod replacement;
+mod style;
+mod segment;
+mod module;
+pub mod shells;
+pub mod displays;
 
 use directories::ProjectDirs;
 use std::{fs, path};
@@ -22,11 +22,11 @@ pub fn load_or_create_configuration() -> base_configuration::BaseConfiguration
 
     match fs::read_to_string(&configuration_path)
     {
-        Ok(content) => toml::from_str(&content).expect("Failed to parse Burnout configuration file."),
+        Ok(content) => yaml_serde::from_str(&content).expect("Failed to parse Burnout configuration file."),
         Err(_) =>
             {
                 let base_configuration = base_configuration::BaseConfiguration::default();
-                let toml_value = toml::to_string(&base_configuration).unwrap();
+                let toml_value = yaml_serde::to_string(&base_configuration).unwrap();
 
                 if let Some(parent) = configuration_path.parent()
                 {
@@ -47,12 +47,12 @@ fn configuration_path() -> path::PathBuf
 {
     if let Some(project_directories) = ProjectDirs::from("dev", "chicken-lips", "burnout")
     {
-        project_directories.config_dir().join("configuration.toml")
+        project_directories.config_dir().join("configuration.yaml")
     }
 
     else
     {
-        dirs::home_dir().unwrap().join("configuration.toml")
+        dirs::home_dir().unwrap().join("configuration.yaml")
     }
 }
 

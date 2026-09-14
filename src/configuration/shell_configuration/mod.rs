@@ -1,7 +1,6 @@
 /*!
  * Handles the shell configuration of Burnout.
  */
-
 pub mod base_configuration;
 pub mod bash;
 pub mod cmd;
@@ -21,18 +20,18 @@ pub fn load_or_create_configuration() -> base_configuration::BaseConfiguration
 
     match fs::read_to_string(&configuration_path)
     {
-        Ok(content) => toml::from_str(&content).expect("Failed to parse Burnout configuration file."),
+        Ok(content) => yaml_serde::from_str(&content).expect("Failed to parse Burnout configuration file."),
         Err(_) =>
             {
                 let base_configuration = base_configuration::BaseConfiguration::default();
-                let toml_value = toml::to_string(&base_configuration).unwrap();
+                let yaml_value = yaml_serde::to_string(&base_configuration).unwrap();
 
                 if let Some(parent) = configuration_path.parent()
                 {
-                    fs::create_dir_all(parent).expect("Failed to create the shell configuration directory.");
+                    fs::create_dir_all(parent).expect("Failed to create the configuration directory.");
                 }
 
-                fs::write(&configuration_path, toml_value).expect("Failed to write the default shell configuration file.");
+                fs::write(&configuration_path, yaml_value).expect("Failed to write the default shell configuration file.");
 
                 base_configuration
             }
@@ -46,12 +45,12 @@ fn configuration_path() -> path::PathBuf
 {
     if let Some(project_directories) = ProjectDirs::from("dev", "chicken-lips", "burnout")
     {
-        project_directories.config_dir().join("shell_configuration.toml")
+        project_directories.config_dir().join("shell_configuration.yaml")
     }
 
     else
     {
-        dirs::home_dir().unwrap().join("shell_configuration.toml")
+        dirs::home_dir().unwrap().join("shell_configuration.yaml")
     }
 }
 

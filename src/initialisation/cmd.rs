@@ -1,7 +1,6 @@
 /*!
  * Handles the initialisation of the Cmd shell.
  */
-
 pub struct Cmd;
 
 use crate::configuration::shell_configuration;

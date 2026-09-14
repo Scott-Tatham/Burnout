@@ -1,11 +1,10 @@
 /*!
  * Handles the initialisation of the PowerShell shell.
  */
+pub struct PowerShell;
 
 use crate::configuration::shell_configuration;
 use super::Shell;
-
-pub struct PowerShell;
 
 /**
  * Implements the [Shell] trait for the PowerShell shell.

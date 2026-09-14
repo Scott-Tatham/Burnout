@@ -1,7 +1,6 @@
 /*!
  * Handles the initialisation of the Bash shell.
  */
-
 pub struct Bash;
 
 use crate::configuration::shell_configuration;

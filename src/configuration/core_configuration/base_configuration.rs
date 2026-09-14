@@ -1,26 +1,26 @@
 /*!
  * Stores the base configuration.
  */
-use super::continuation::ContinuationConfiguration;
-use super::prompt::PromptConfiguration;
-use super::right::RightConfiguration;
-use super::right_transient::RightTransientConfiguration;
-use super::transient::TransientConfiguration;
-use super::window_title::WindowTitleConfiguration;
+use super::shells::bash::BashConfiguration;
+use super::shells::cmd::CmdConfiguration;
+use super::shells::git_bash::GitBashConfiguration;
+use super::shells::powershell::PowerShellConfiguration;
+use super::shells::zsh::ZshConfiguration;
+use super::module::ModuleConfiguration;
 use serde::{Deserialize, Serialize};
 
 /**
  * Stores the base configuration.
  */
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct BaseConfiguration
 {
-    pub prompt: Option<PromptConfiguration>,
-    pub right: Option<RightConfiguration>,
-    pub transient: Option<TransientConfiguration>,
-    pub right_transient: Option<RightTransientConfiguration>,
-    pub continuation: Option<ContinuationConfiguration>,
-    pub window_title: Option<WindowTitleConfiguration>
+    pub bash: Option<BashConfiguration>,
+    pub zsh: Option<ZshConfiguration>,
+    pub git_bash: Option<GitBashConfiguration>,
+    pub powershell: Option<PowerShellConfiguration>,
+    pub cmd: Option<CmdConfiguration>,
+    pub modules: Option<Vec<ModuleConfiguration>>
 }
 
 /**
@@ -32,12 +32,12 @@ impl Default for BaseConfiguration
     {
         Self
         {
-            prompt: Some(PromptConfiguration::default()),
-            right: Some(RightConfiguration::default()),
-            transient: Some(TransientConfiguration::default()),
-            right_transient: Some(RightTransientConfiguration::default()),
-            continuation: Some(ContinuationConfiguration::default()),
-            window_title: Some(WindowTitleConfiguration::default())
+            bash: Some(BashConfiguration::default()),
+            zsh: Some(ZshConfiguration::default()),
+            git_bash: Some(GitBashConfiguration::default()),
+            powershell: Some(PowerShellConfiguration::default()),
+            cmd: Some(CmdConfiguration::default()),
+            modules: Some(Vec::default())
         }
     }
 }
@@ -51,113 +51,60 @@ mod tests
     use super::*;
 
     /**
-     * Tests the default values for base configuration are correct.
+     * Tests the default values for the configuration are correct.
      */
     #[test]
     fn test_default_values_are_correct()
     {
         let configuration = BaseConfiguration::default();
 
-        assert!(configuration.prompt.is_some());
-        assert!(configuration.right.is_some());
-        assert!(configuration.transient.is_some());
-        assert!(configuration.right_transient.is_some());
-        assert!(configuration.continuation.is_some());
-        assert!(configuration.window_title.is_some());
+        assert!(configuration.bash.is_some());
+        assert!(configuration.zsh.is_some());
+        assert!(configuration.git_bash.is_some());
+        assert!(configuration.powershell.is_some());
+        assert!(configuration.cmd.is_some());
+        assert!(configuration.modules.is_some());
     }
 
     /**
-     * Tests the deserialisation of a full configuration as TOML.
+     * Tests the deserialisation of an empty configuration as YAML.
      */
     #[test]
-    fn test_toml_deserialisation_full_configuration()
+    fn test_yaml_deserialisation_empty_configuration()
     {
-        let configuration: BaseConfiguration = toml::from_str(r#"
-            # Configuration for the prompt.
-            [prompt]
-            content = "Test Prompt"
+        let configuration: BaseConfiguration = yaml_serde::from_str(String::default().as_str()).expect("Failed to deserialise the empty configuration.");
 
-            # Configuration for the right prompt.
-            [right]
-            content = "Test Right"
-
-            # Configuration for the transient prompt.
-            [transient]
-            content = "Test Transient"
-
-            # Configuration for the right transient prompt.
-            [right_transient]
-            content = "Test Right Transient"
-
-            # Configuration for the continuation prompt.
-            [continuation]
-            content = "Test Continuation"
-
-            # Configuration for the window title.
-            [window_title]
-            content = "Test Window Title"
-        "#).expect("Failed to parse valid TOML.");
-
-        assert_eq!(configuration.prompt.unwrap().content, Some("Test Prompt".to_string()));
-        assert_eq!(configuration.right.unwrap().content, Some("Test Right".to_string()));
-        assert_eq!(configuration.transient.unwrap().content, Some("Test Transient".to_string()));
-        assert_eq!(configuration.right_transient.unwrap().content, Some("Test Right Transient".to_string()));
-        assert_eq!(configuration.continuation.unwrap().content, Some("Test Continuation".to_string()));
-        assert_eq!(configuration.window_title.unwrap().content, Some("Test Window Title".to_string()));
+        assert!(configuration.bash.is_none());
+        assert!(configuration.zsh.is_none());
+        assert!(configuration.git_bash.is_none());
+        assert!(configuration.powershell.is_none());
+        assert!(configuration.cmd.is_none());
+        assert!(configuration.modules.is_none());
     }
 
     /**
-     * Tests the deserialisation of a partial configuration as TOML.
+     * Tests the serialisation and deserialisation of an empty configuration as YAML.
      */
     #[test]
-    fn test_toml_deserialisation_partial_configuration()
+    fn test_yaml_serialisation_and_deserialisation_empty_configuration()
     {
-        let toml_string = r#"
-            # Configuration for the prompt.
-            [prompt]
-            content = "Test Prompt"
-        "#;
+        let configuration = BaseConfiguration
+        {
+            bash: None,
+            zsh: None,
+            git_bash: None,
+            powershell: None,
+            cmd: None,
+            modules: None
+        };
 
-        let configuration: BaseConfiguration = toml::from_str(toml_string).expect("Failed to deserialise the partial configuration.");
+        let deserialised: BaseConfiguration = yaml_serde::from_str(&yaml_serde::to_string(&configuration).expect("Failed to serialise the empty configuration.")).expect("Failed to deserialise the empty configuration.");
 
-        assert_eq!(configuration.prompt.unwrap().content, Some("Test Prompt".to_string()));
-        assert!(configuration.right.is_none());
-        assert!(configuration.transient.is_none());
-        assert!(configuration.right_transient.is_none());
-        assert!(configuration.continuation.is_none());
-        assert!(configuration.window_title.is_none());
-    }
-
-    /**
-     * Tests the deserialisation of an empty configuration as TOML.
-     */
-    #[test]
-    fn test_toml_deserialisation_empty_configuration()
-    {
-        let configuration: BaseConfiguration = toml::from_str("").expect("Failed to deserialise the empty configuration.");
-
-        assert!(configuration.prompt.is_none());
-        assert!(configuration.right.is_none());
-        assert!(configuration.transient.is_none());
-        assert!(configuration.right_transient.is_none());
-        assert!(configuration.continuation.is_none());
-        assert!(configuration.window_title.is_none());
-    }
-
-    /**
-     * Tests the serialisation and deserialisation of the default configuration as TOML.
-     */
-    #[test]
-    fn test_toml_serialisation_and_deserialisation_default_configuration()
-    {
-        let configuration = BaseConfiguration::default();
-        let deserialised: BaseConfiguration = toml::from_str(&toml::to_string(&configuration).expect("Failed to serialise the base configuration.")).expect("Failed to deserialise the base configuration.");
-
-        assert_eq!(configuration.prompt.unwrap().content, deserialised.prompt.unwrap().content);
-        assert_eq!(configuration.right.unwrap().content, deserialised.right.unwrap().content);
-        assert_eq!(configuration.transient.unwrap().content, deserialised.transient.unwrap().content);
-        assert_eq!(configuration.right_transient.unwrap().content, deserialised.right_transient.unwrap().content);
-        assert_eq!(configuration.continuation.unwrap().content, deserialised.continuation.unwrap().content);
-        assert_eq!(configuration.window_title.unwrap().content, deserialised.window_title.unwrap().content);
+        assert!(deserialised.bash.is_none());
+        assert!(deserialised.zsh.is_none());
+        assert!(deserialised.git_bash.is_none());
+        assert!(deserialised.powershell.is_none());
+        assert!(deserialised.cmd.is_none());
+        assert!(deserialised.modules.is_none());
     }
 }
