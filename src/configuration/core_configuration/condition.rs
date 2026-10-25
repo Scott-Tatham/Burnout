@@ -4,57 +4,56 @@
 use serde::{Deserialize, Serialize};
 use yaml_serde::Value;
 
-/**
- * Stores a condition configuration.
- */
+/// Stores a condition configuration.
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct ConditionConfiguration
 {
+    /// The optional variable to check.
     pub variable: Option<String>,
+
+    /// The optional operation to perform as a check.
     pub operation: Option<String>,
+
+    /// The optional value to compare.
     pub value: Option<Value>
 }
 
-/**
- * Implements the [Default] trait for the condition configuration.
- */
+/// Implements the [Default] trait for the [ConditionConfiguration].
 impl Default for ConditionConfiguration
 {
+    /// Initialises a new, default instance of the [ConditionConfiguration] struct.
+    /// # Returns
+    /// `ConditionConfiguration` - Returns the new, default instance of the [ConditionConfiguration] struct.
     fn default() -> Self
     {
         Self
         {
-            variable: Some(String::default()),
-            operation: Some(String::default()),
-            value: Some(Value::default())
+            variable: None,
+            operation: None,
+            value: None
         }
     }
 }
 
-/**
- * Unit tests for the condition configuration.
- */
+/// Tests for the [ConditionConfiguration].
 #[cfg(test)]
 mod tests
 {
-    use super::*;
+    use yaml_serde::Value;
+    use super::ConditionConfiguration;
 
-    /**
-     * Tests the default values for the configuration are correct.
-     */
+    /// Tests the default values for the configuration are correct.
     #[test]
     fn test_default_values_are_correct()
     {
         let configuration = ConditionConfiguration::default();
 
-        assert!(configuration.variable.is_some());
-        assert!(configuration.operation.is_some());
-        assert!(configuration.value.is_some());
+        assert!(configuration.variable.is_none());
+        assert!(configuration.operation.is_none());
+        assert!(configuration.value.is_none());
     }
 
-    /**
-     * Tests the deserialisation of an empty configuration as YAML.
-     */
+    /// Tests the deserialisation of an empty configuration as YAML.
     #[test]
     fn test_yaml_deserialisation_empty_configuration()
     {
@@ -65,39 +64,31 @@ mod tests
         assert!(configuration.value.is_none());
     }
 
-    /**
-     * Tests the deserialisation of a partial configuration as YAML.
-     */
+    /// Tests the deserialisation of a partial configuration as YAML.
     #[test]
     fn test_yaml_deserialisation_partial_configuration()
     {
-        let configuration: ConditionConfiguration = yaml_serde::from_str(r#"condition:
-  variable: 'Test Variable'"#).expect("Failed to deserialise the partial configuration.");
+        let configuration: ConditionConfiguration = yaml_serde::from_str(r#"variable: 'Test Variable'"#).expect("Failed to deserialise the partial configuration.");
 
         assert_eq!(configuration.variable, Some("Test Variable".to_string()));
         assert!(configuration.operation.is_none());
         assert!(configuration.value.is_none());
     }
 
-    /**
-     * Tests the deserialisation of a full configuration as YAML.
-     */
+    /// Tests the deserialisation of a full configuration as YAML.
     #[test]
     fn test_yaml_deserialisation_full_configuration()
     {
-        let configuration: ConditionConfiguration = yaml_serde::from_str(r#"condition:
-  variable: 'Test Variable'
-  operation: 'Test Operation'
-  value: 0"#).expect("Failed to parse valid YAML.");
+        let configuration: ConditionConfiguration = yaml_serde::from_str(r#"variable: 'Test Variable'
+operation: 'Test Operation'
+value: 0"#).expect("Failed to parse valid YAML.");
 
         assert_eq!(configuration.variable, Some("Test Variable".to_string()));
         assert_eq!(configuration.operation, Some("Test Operation".to_string()));
         assert_eq!(configuration.value.unwrap().as_i64(), Some(0));
     }
 
-    /**
-     * Tests the serialisation and deserialisation of an empty configuration as YAML.
-     */
+    /// Tests the serialisation and deserialisation of an empty configuration as YAML.
     #[test]
     fn test_yaml_serialisation_and_deserialisation_empty_configuration()
     {
@@ -115,9 +106,7 @@ mod tests
         assert!(deserialised.value.is_none());
     }
 
-    /**
-     * Tests the serialisation and deserialisation of a partial configuration as YAML.
-     */
+    /// Tests the serialisation and deserialisation of a partial configuration as YAML.
     #[test]
     fn test_yaml_serialisation_and_deserialisation_partial_configuration()
     {
@@ -135,23 +124,20 @@ mod tests
         assert!(deserialised.value.is_none());
     }
 
-    /**
-     * Tests the serialisation and deserialisation of a default configuration as YAML.
-     */
+    /// Tests the serialisation and deserialisation of a default configuration as YAML.
     #[test]
     fn test_yaml_serialisation_and_deserialisation_default_configuration()
     {
         let configuration = ConditionConfiguration::default();
-        let deserialised: ConditionConfiguration = yaml_serde::from_str(&yaml_serde::to_string(&configuration).expect("Failed to serialise the default configuration.")).expect("Failed to deserialise the default configuration.");
+        let serialised = &yaml_serde::to_string(&configuration).expect("Failed to serialise the default configuration.");
+        let deserialised: ConditionConfiguration = yaml_serde::from_str(serialised).expect("Failed to deserialise the default configuration.");
 
         assert_eq!(configuration.variable, deserialised.variable);
         assert_eq!(configuration.operation, deserialised.operation);
         assert_eq!(configuration.value, deserialised.value);
     }
 
-    /**
-     * Tests the serialisation and deserialisation of a full configuration as YAML.
-     */
+    /// Tests the serialisation and deserialisation of a full configuration as YAML.
     #[test]
     fn test_yaml_serialisation_and_deserialisation_full_configuration()
     {

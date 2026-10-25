@@ -1,35 +1,43 @@
 /*!
  * Stores a module configuration.
  */
+use serde::{Deserialize, Serialize};
+use yaml_serde::Value;
 use super::segment::SegmentConfiguration;
 use super::style::StyleConfiguration;
 use super::condition::ConditionConfiguration;
-use serde::{Deserialize, Serialize};
-use yaml_serde::Value;
 
-/**
- * Stores a module configuration.
- */
+/// Stores a module configuration.
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct ModuleConfiguration
 {
+    /// The optional name to identify the module.
     pub name: Option<String>,
+
+    /// The optional collection of arguments to modify the module behaviour.
     pub arguments: Option<Vec<Value>>,
+
+    /// The optional collection of [SegmentConfiguration] instances.
     pub segments: Option<Vec<SegmentConfiguration>>,
+
+    /// The optional [StyleConfiguration] instance.
     pub style: Option<StyleConfiguration>,
+
+    /// The optional [ConditionConfiguration] instance.
     pub condition: Option<ConditionConfiguration>
 }
 
-/**
- * Implements the [Default] trait for the module configuration.
- */
+/// Implements the [Default] trait for the [ModuleConfiguration].
 impl Default for ModuleConfiguration
 {
+    /// Initialises a new, default instance of the [ModuleConfiguration] struct.
+    /// # Returns
+    /// `ModuleConfiguration` - Returns the new, default instance of the [ModuleConfiguration] struct.
     fn default() -> Self
     {
         Self
         {
-            name: Some(String::default()),
+            name: None,
             arguments: Some(Vec::default()),
             segments: Some(Vec::default()),
             style: Some(StyleConfiguration::default()),
@@ -38,32 +46,26 @@ impl Default for ModuleConfiguration
     }
 }
 
-/**
- * Unit tests for the module configuration.
- */
+/// Tests for the [ModuleConfiguration].
 #[cfg(test)]
 mod tests
 {
-    use super::*;
+    use super::ModuleConfiguration;
 
-    /**
-     * Tests the default values for the configuration are correct.
-     */
+    /// Tests the default values for the configuration are correct.
     #[test]
     fn test_default_values_are_correct()
     {
         let configuration = ModuleConfiguration::default();
 
-        assert!(configuration.name.is_some());
+        assert!(configuration.name.is_none());
         assert!(configuration.arguments.is_some());
         assert!(configuration.segments.is_some());
         assert!(configuration.style.is_some());
         assert!(configuration.condition.is_some());
     }
 
-    /**
-     * Tests the deserialisation of an empty configuration as YAML.
-     */
+    /// Tests the deserialisation of an empty configuration as YAML.
     #[test]
     fn test_yaml_deserialisation_empty_configuration()
     {
@@ -76,14 +78,11 @@ mod tests
         assert!(configuration.condition.is_none());
     }
 
-    /**
-     * Tests the deserialisation of a partial configuration as YAML.
-     */
+    /// Tests the deserialisation of a partial configuration as YAML.
     #[test]
     fn test_yaml_deserialisation_partial_configuration()
     {
-        let configuration: ModuleConfiguration = yaml_serde::from_str(r#"module:
-  name: 'Test Name'"#).expect("Failed to deserialise the partial configuration.");
+        let configuration: ModuleConfiguration = yaml_serde::from_str(r#"name: 'Test Name'"#).expect("Failed to deserialise the partial configuration.");
 
         assert_eq!(configuration.name, Some("Test Name".to_string()));
         assert!(configuration.arguments.is_none());
@@ -92,9 +91,7 @@ mod tests
         assert!(configuration.condition.is_none());
     }
 
-    /**
-     * Tests the serialisation and deserialisation of an empty configuration as YAML.
-     */
+    /// Tests the serialisation and deserialisation of an empty configuration as YAML.
     #[test]
     fn test_yaml_serialisation_and_deserialisation_empty_configuration()
     {
@@ -116,9 +113,7 @@ mod tests
         assert!(deserialised.condition.is_none());
     }
 
-    /**
-     * Tests the serialisation and deserialisation of a partial configuration as YAML.
-     */
+    /// Tests the serialisation and deserialisation of a partial configuration as YAML.
     #[test]
     fn test_yaml_serialisation_and_deserialisation_partial_configuration()
     {
@@ -140,9 +135,7 @@ mod tests
         assert!(deserialised.condition.is_none());
     }
 
-    /**
-     * Tests the serialisation and deserialisation of a default configuration as YAML.
-     */
+    /// Tests the serialisation and deserialisation of a default configuration as YAML.
     #[test]
     fn test_yaml_serialisation_and_deserialisation_default_configuration()
     {

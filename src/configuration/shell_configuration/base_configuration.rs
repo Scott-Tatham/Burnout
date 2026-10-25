@@ -1,24 +1,27 @@
 /*!
  * Stores the base configuration.
  */
-use super::bash::BashConfiguration;
-use super::zsh::ZshConfiguration;
-use super::git_bash::GitBashConfiguration;
-use super::powershell::PowerShellConfiguration;
-use super::cmd::CmdConfiguration;
 use serde::{Deserialize, Serialize};
+use super::shell_configuration::ShellConfiguration;
 
-/**
- * Stores the base configuration.
- */
+/// Stores the base configuration.
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct BaseConfiguration
 {
-    pub bash: Option<BashConfiguration>,
-    pub zsh: Option<ZshConfiguration>,
-    pub git_bash: Option<GitBashConfiguration>,
-    pub powershell: Option<PowerShellConfiguration>,
-    pub cmd: Option<CmdConfiguration>
+    /// The optional [ShellConfiguration] instance for Bash.
+    pub bash: Option<ShellConfiguration>,
+    
+    /// The optional [ShellConfiguration] instance for Zsh.
+    pub zsh: Option<ShellConfiguration>,
+
+    /// The optional [ShellConfiguration] instance for Git Bash.
+    pub git_bash: Option<ShellConfiguration>,
+
+    /// The optional [ShellConfiguration] instance for PowerShell.
+    pub powershell: Option<ShellConfiguration>,
+
+    /// The optional [ShellConfiguration] instance for Cmd.
+    pub cmd: Option<ShellConfiguration>
 }
 
 /**
@@ -30,11 +33,71 @@ impl Default for BaseConfiguration
     {
         Self
         {
-            bash: Some(BashConfiguration::default()),
-            zsh: Some(ZshConfiguration::default()),
-            git_bash: Some(GitBashConfiguration::default()),
-            powershell: Some(PowerShellConfiguration::default()),
-            cmd: Some(CmdConfiguration::default())
+            bash: Some(ShellConfiguration
+            {
+                setup: Some(r#"BURNOUT=$(command -v burnout); \
+PS1="$($BURNOUT)"; \
+RPROMPT="$($BURNOUT right)"; \
+PS1_TRANSIENT="$($BURNOUT transient)"; \
+RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
+PS2="$($BURNOUT continuation)" \
+PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window-title)\007"'"#.to_string())
+            }),
+            zsh: Some(ShellConfiguration
+            {
+                setup: Some(r#"autoload -Uz promptinit \
+promptinit \
+prompt transient \
+setopt transient_rprompt \
+BURNOUT=$(command -v burnout); \
+PROMPT="$($BURNOUT)"; \
+RPROMPT="$($BURNOUT right)"; \
+PROMPT_TRANSIENT="$($BURNOUT transient)"; \
+RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
+PS2="$($BURNOUT continuation)" \
+precmd_functions+=(set_window_title); \
+function set_window_title(){{echo -ne "\033]0;$($BURNOUT window-title)\007"}}"#.to_string())
+            }),
+            git_bash: Some(ShellConfiguration
+            {
+                setup: Some(r#"BURNOUT=$(command -v burnout.exe); \
+PS1=$($BURNOUT); \
+RPROMPT="$($BURNOUT right)"; \
+PS1_TRANSIENT="$($BURNOUT transient)"; \
+RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
+PS2="$($BURNOUT continuation)" \
+PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window-title)\007"'"#.to_string())
+            }),
+            powershell: Some(ShellConfiguration
+            {
+                setup: Some(r#"[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; $burnout = (Get-Command burnout).Source; $PSContinuationPrompt = { & $burnout continuation }; function global:prompt { $host.UI.RawUI.WindowTitle = (& $burnout window-title); return & $burnout;}"#.to_string())
+            }),
+            cmd: Some(ShellConfiguration
+            {
+                setup: Some(r#"if (clink.version_encoded or 0) < 10020030 then
+error("Burnout requires Clink v1.2.30 or later.")
+end
+local prompt = clink.promptfilter(1)
+function prompt:filter(prompt)
+set_title(prompt)
+return io.popen("burnout"):read("*a")
+end
+function prompt:rightfilter(prompt)
+return io.popen("burnout right"):read("*a")
+end
+function prompt:transientfilter(prompt)
+return io.popen("burnout transient"):read("*a")
+end
+function prompt:transientrightfilter(prompt)
+return io.popen("burnout right-transient"):read("*a")
+end
+function set_title(prompt)
+local title = io.popen("burnout window-title"):read("*a")
+if title ~= nil then
+console.settitle(title)
+end
+end"#.to_string())
+            })
         }
     }
 }
@@ -45,7 +108,7 @@ impl Default for BaseConfiguration
 #[cfg(test)]
 mod tests
 {
-    use super::*;
+    use super::BaseConfiguration;
 
     /**
      * Tests the default values for the configuration are correct.

@@ -1,10 +1,11 @@
 [package]
 name = "burnout"
-version = "0.0.7"
+version = "0.0.9
+"
 edition = "2024"
 
 [dependencies]
 directories = "6.0.0"
-dirs = "6.0.0"
+dirs = "7.0.0"
 serde = { version = "1.0.229", features = ["derive"] }
 yaml_serde = "0.10.7"

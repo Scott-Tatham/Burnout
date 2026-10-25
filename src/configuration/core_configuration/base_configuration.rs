@@ -1,58 +1,60 @@
 /*!
  * Stores the base configuration.
  */
-use super::shells::bash::BashConfiguration;
-use super::shells::cmd::CmdConfiguration;
-use super::shells::git_bash::GitBashConfiguration;
-use super::shells::powershell::PowerShellConfiguration;
-use super::shells::zsh::ZshConfiguration;
-use super::module::ModuleConfiguration;
 use serde::{Deserialize, Serialize};
+use super::shells::shell_configuration::ShellConfiguration;
+use super::module::ModuleConfiguration;
 
-/**
- * Stores the base configuration.
- */
+/// Stores the base configuration.
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct BaseConfiguration
 {
-    pub bash: Option<BashConfiguration>,
-    pub zsh: Option<ZshConfiguration>,
-    pub git_bash: Option<GitBashConfiguration>,
-    pub powershell: Option<PowerShellConfiguration>,
-    pub cmd: Option<CmdConfiguration>,
+    /// The optional [ShellConfiguration] instance for Bash.
+    pub bash: Option<ShellConfiguration>,
+
+    /// The optional [ShellConfiguration] instance for Zsh.
+    pub zsh: Option<ShellConfiguration>,
+
+    /// The optional [ShellConfiguration] instance for Git Bash.
+    pub git_bash: Option<ShellConfiguration>,
+
+    /// The optional [ShellConfiguration] instance for PowerShell.
+    pub powershell: Option<ShellConfiguration>,
+
+    /// The optional [ShellConfiguration] instance for Cmd.
+    pub cmd: Option<ShellConfiguration>,
+
+    /// The optional collection of [ModuleConfiguration] instances.
     pub modules: Option<Vec<ModuleConfiguration>>
 }
 
-/**
- * Implements the [Default] trait for the prompt.
- */
+/// The implementation of the [Default] trait for the [BaseConfiguration].
 impl Default for BaseConfiguration
 {
+    /// Initialises a new, default instance of the [BaseConfiguration] struct.
+    /// # Returns
+    /// `BaseConfiguration` - Returns the new, default instance of the [BaseConfiguration] struct.
     fn default() -> Self
     {
         Self
         {
-            bash: Some(BashConfiguration::default()),
-            zsh: Some(ZshConfiguration::default()),
-            git_bash: Some(GitBashConfiguration::default()),
-            powershell: Some(PowerShellConfiguration::default()),
-            cmd: Some(CmdConfiguration::default()),
+            bash: Some(ShellConfiguration::default()),
+            zsh: Some(ShellConfiguration::default()),
+            git_bash: Some(ShellConfiguration::default()),
+            powershell: Some(ShellConfiguration::default()),
+            cmd: Some(ShellConfiguration::default()),
             modules: Some(Vec::default())
         }
     }
 }
 
-/**
- * Unit tests for the base configuration.
- */
+/// Tests for the [BaseConfiguration].
 #[cfg(test)]
 mod tests
 {
-    use super::*;
+    use super::BaseConfiguration;
 
-    /**
-     * Tests the default values for the configuration are correct.
-     */
+    /// Tests the default values for the configuration are correct.
     #[test]
     fn test_default_values_are_correct()
     {
@@ -66,9 +68,7 @@ mod tests
         assert!(configuration.modules.is_some());
     }
 
-    /**
-     * Tests the deserialisation of an empty configuration as YAML.
-     */
+    /// Tests the deserialisation of an empty configuration as YAML.
     #[test]
     fn test_yaml_deserialisation_empty_configuration()
     {
@@ -82,9 +82,7 @@ mod tests
         assert!(configuration.modules.is_none());
     }
 
-    /**
-     * Tests the serialisation and deserialisation of an empty configuration as YAML.
-     */
+    /// Tests the serialisation and deserialisation of an empty configuration as YAML.
     #[test]
     fn test_yaml_serialisation_and_deserialisation_empty_configuration()
     {

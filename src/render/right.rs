@@ -3,30 +3,31 @@
  */
 pub struct RightPrompt;
 
-use crate::configuration::core_configuration;
-use super::Display;
+use super::display::Display;
+use super::super::configuration::core_configuration::base_configuration::BaseConfiguration;
 
-/**
- * Implements the [Display] trait for the right prompt.
- */
+/// Implements the [Display] trait for the [RightPrompt].
 impl Display for RightPrompt
 {
-    /**
-    * Renders the value for the right prompt.
-    * # Arguments
-    * * `configuration` - The configuration with the right prompt values.
-    * * `shell` - The shell to target with the right prompt values.
-    */
-    fn render_display(configuration: core_configuration::base_configuration::BaseConfiguration, shell: &str)
+    /// Renders the value for the right prompt.
+    /// # Arguments
+    /// * `configuration` - The configuration with the right prompt values.
+    /// * `shell` - The shell to target with the right prompt values.
+    /// # Returns
+    /// * `Ok(())` - Returns that the rendering was successful.
+    /// * `Err(String)` - Returns that the rendering failed.
+    fn render_display(configuration: BaseConfiguration, shell: &str) -> Result<(), String>
     {
         match shell
         {
-            "bash" => println!("{}", &configuration.bash.unwrap_or_default().right.unwrap_or_default().content.as_deref().unwrap_or_default()),
-            "zsh" => println!("{}", &configuration.zsh.unwrap_or_default().right.unwrap_or_default().content.as_deref().unwrap_or_default()),
-            "git_bash" => println!("{}", &configuration.git_bash.unwrap_or_default().right.unwrap_or_default().content.as_deref().unwrap_or_default()),
-            "powershell" | "pwsh" => println!("{}", &configuration.powershell.unwrap_or_default().right.unwrap_or_default().content.as_deref().unwrap_or_default()),
-            "cmd" => println!("{}", &configuration.cmd.unwrap_or_default().right.unwrap_or_default().content.as_deref().unwrap_or_default()),
-            _ => eprintln!("Unsupported shell for rendering: {}", shell)
+            "bash" => println!("{}", &configuration.bash.expect("Failed to get the Bash configuration.").right.expect("Failed to get the Bash right.").content.expect("Failed to get the Bash content.")),
+            "git_bash" => println!("{}", &configuration.bash.expect("Failed to get the Git Bash configuration.").right.expect("Failed to get the Git Bash right.").content.expect("Failed to get the Git Bash content.")),
+            "zsh" => println!("{}", &configuration.bash.expect("Failed to get the Zsh configuration.").right.expect("Failed to get the Zsh right.").content.expect("Failed to get the Zsh content.")),
+            "powershell" | "pwsh" => println!("{}", &configuration.bash.expect("Failed to get the PowerShell configuration.").right.expect("Failed to get the PowerShell right.").content.expect("Failed to get the PowerShell content.")),
+            "cmd" => println!("{}", &configuration.bash.expect("Failed to get the Cmd configuration.").right.expect("Failed to get the Cmd right.").content.expect("Failed to get the Cmd content.")),
+            _ => return Err(format!("Unsupported shell for rendering: {}.", shell))
         }
+
+        Ok(())
     }
 }
