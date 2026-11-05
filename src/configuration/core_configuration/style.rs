@@ -7,22 +7,22 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct StyleConfiguration
 {
-    /// The optional collection of colours.
+    /// The collection of colours.
     pub colours: Option<Vec<String>>,
 
-    /// The optional pattern for the colours.
+    /// The pattern for the colours.
     pub pattern: Option<String>,
 
-    /// The optional flag for whether to set the text bold.
+    /// The flag for whether to set the text bold.
     pub bold: Option<bool>,
 
-    /// The optional flag for whether to set the text italicised.
+    /// The flag for whether to set the text italicised.
     pub italics: Option<bool>,
 
-    /// The optional flag for whether to set the text underlined.
+    /// The flag for whether to set the text underlined.
     pub underline: Option<bool>,
 
-    /// The optional flag for whether to set the text struck through.
+    /// The flag for whether to set the text struck through.
     pub strikethrough: Option<bool>
 }
 

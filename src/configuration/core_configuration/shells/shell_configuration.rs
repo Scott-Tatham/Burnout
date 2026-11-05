@@ -3,32 +3,28 @@
  */
 use serde::{Deserialize, Serialize};
 use super::super::displays::display_configuration::DisplayConfiguration;
-use super::super::module::ModuleConfiguration;
 
 /// Stores the shell configuration.
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct ShellConfiguration
 {
-    /// The optional [DisplayConfiguration] instance for the prompt configuration.
+    /// The [DisplayConfiguration] instance for the prompt configuration.
     pub prompt: Option<DisplayConfiguration>,
 
-    /// The optional [DisplayConfiguration] instance for the right prompt configuration.
+    /// The [DisplayConfiguration] instance for the right prompt configuration.
     pub right: Option<DisplayConfiguration>,
 
-    /// The optional [DisplayConfiguration] instance for the transient prompt configuration.
+    /// The [DisplayConfiguration] instance for the transient prompt configuration.
     pub transient: Option<DisplayConfiguration>,
 
-    /// The optional [DisplayConfiguration] instance for the right transient prompt configuration.
+    /// The [DisplayConfiguration] instance for the right transient prompt configuration.
     pub right_transient: Option<DisplayConfiguration>,
 
-    /// The optional [DisplayConfiguration] instance for the continuation prompt configuration.
+    /// The [DisplayConfiguration] instance for the continuation prompt configuration.
     pub continuation: Option<DisplayConfiguration>,
 
-    /// The optional [DisplayConfiguration] instance for the window title configuration.
-    pub window_title: Option<DisplayConfiguration>,
-
-    /// The optional collection of [ModuleConfiguration] instances.
-    pub modules: Option<Vec<ModuleConfiguration>>
+    /// The [DisplayConfiguration] instance for the window title configuration.
+    pub window_title: Option<DisplayConfiguration>
 }
 
 /// Implements the [Default] trait for the [ShellConfiguration].
@@ -44,46 +40,39 @@ impl Default for ShellConfiguration
             prompt: Some(
                 DisplayConfiguration
                 {
-                    content: Some("Prompt".to_string()),
-                    modules: Some(Vec::default())
+                    segments: Some(Vec::default())
                 }
             ),
             right: Some(
                 DisplayConfiguration
                 {
-                    content: Some("Right".to_string()),
-                    modules: Some(Vec::default())
+                    segments: Some(Vec::default())
                 }
             ),
             transient: Some(
                 DisplayConfiguration
                 {
-                    content: Some("Transient".to_string()),
-                    modules: Some(Vec::default())
+                    segments: Some(Vec::default())
                 }
             ),
             right_transient: Some(
                 DisplayConfiguration
                 {
-                    content: Some("Right Transient".to_string()),
-                    modules: Some(Vec::default())
+                    segments: Some(Vec::default())
                 }
             ),
             continuation: Some(
                 DisplayConfiguration
                 {
-                    content: Some("Continuation".to_string()),
-                    modules: Some(Vec::default())
+                    segments: Some(Vec::default())
                 }
             ),
             window_title: Some(
                 DisplayConfiguration
                 {
-                    content: Some("Window Title".to_string()),
-                    modules: Some(Vec::default())
+                    segments: Some(Vec::default())
                 }
-            ),
-            modules: Some(Vec::default())
+            )
         }
     }
 }
@@ -92,7 +81,7 @@ impl Default for ShellConfiguration
 #[cfg(test)]
 mod tests
 {
-    use super::{ShellConfiguration, DisplayConfiguration};
+    use super::ShellConfiguration;
 
     /// Tests the default values for the configuration are correct.
     #[test]
@@ -106,7 +95,6 @@ mod tests
         assert!(configuration.right_transient.is_some());
         assert!(configuration.continuation.is_some());
         assert!(configuration.window_title.is_some());
-        assert!(configuration.modules.is_some());
     }
 
     /// Tests the deserialisation of an empty configuration as YAML.
@@ -121,23 +109,6 @@ mod tests
         assert!(configuration.right_transient.is_none());
         assert!(configuration.continuation.is_none());
         assert!(configuration.window_title.is_none());
-        assert!(configuration.modules.is_none());
-    }
-
-    /// Tests the deserialisation of a partial configuration as YAML.
-    #[test]
-    fn test_yaml_deserialisation_partial_configuration()
-    {
-        let configuration: ShellConfiguration = yaml_serde::from_str(r#"prompt:
-  content: Display Element"#).expect("Failed to deserialise the partial configuration.");
-
-        assert_eq!(configuration.prompt.unwrap().content, Some("Display Element".to_string()));
-        assert!(configuration.right.is_none());
-        assert!(configuration.transient.is_none());
-        assert!(configuration.right_transient.is_none());
-        assert!(configuration.continuation.is_none());
-        assert!(configuration.window_title.is_none());
-        assert!(configuration.modules.is_none());
     }
 
     /// Tests the serialisation and deserialisation of an empty configuration as YAML.
@@ -151,8 +122,7 @@ mod tests
             transient: None,
             right_transient: None,
             continuation: None,
-            window_title: None,
-            modules: None
+            window_title: None
         };
 
         let deserialised: ShellConfiguration = yaml_serde::from_str(&yaml_serde::to_string(&configuration).expect("Failed to serialise the empty configuration.")).expect("Failed to deserialise the empty configuration.");
@@ -163,52 +133,5 @@ mod tests
         assert!(deserialised.right_transient.is_none());
         assert!(deserialised.continuation.is_none());
         assert!(deserialised.window_title.is_none());
-        assert!(deserialised.modules.is_none());
-    }
-
-    /// Tests the serialisation and deserialisation of a partial configuration as YAML.
-    #[test]
-    fn test_yaml_serialisation_and_deserialisation_partial_configuration()
-    {
-        let configuration = ShellConfiguration
-        {
-            prompt: Some(DisplayConfiguration
-            {
-                content: Some("Test Display Element".to_string()),
-                modules: None
-            }),
-            right: None,
-            transient: None,
-            right_transient: None,
-            continuation: None,
-            window_title: None,
-            modules: None
-        };
-
-        let deserialised: ShellConfiguration = yaml_serde::from_str(&yaml_serde::to_string(&configuration).expect("Failed to serialise the empty configuration.")).expect("Failed to deserialise the empty configuration.");
-
-        assert_eq!(configuration.prompt.unwrap().content, deserialised.prompt.unwrap().content);
-        assert!(deserialised.right.is_none());
-        assert!(deserialised.transient.is_none());
-        assert!(deserialised.right_transient.is_none());
-        assert!(deserialised.continuation.is_none());
-        assert!(deserialised.window_title.is_none());
-        assert!(deserialised.modules.is_none());
-    }
-
-    /// Tests the serialisation and deserialisation of a default configuration as YAML.
-    #[test]
-    fn test_yaml_serialisation_and_deserialisation_default_configuration()
-    {
-        let configuration = ShellConfiguration::default();
-        let deserialised: ShellConfiguration = yaml_serde::from_str(&yaml_serde::to_string(&configuration).expect("Failed to serialise the base configuration.")).expect("Failed to deserialise the base configuration.");
-
-        assert_eq!(configuration.prompt.unwrap().content, deserialised.prompt.unwrap().content);
-        assert_eq!(configuration.right.unwrap().content, deserialised.right.unwrap().content);
-        assert_eq!(configuration.transient.unwrap().content, deserialised.transient.unwrap().content);
-        assert_eq!(configuration.right_transient.unwrap().content, deserialised.right_transient.unwrap().content);
-        assert_eq!(configuration.continuation.unwrap().content, deserialised.continuation.unwrap().content);
-        assert_eq!(configuration.window_title.unwrap().content, deserialised.window_title.unwrap().content);
-        assert_eq!(configuration.modules.unwrap(), deserialised.modules.unwrap());
     }
 }

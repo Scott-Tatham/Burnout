@@ -8,13 +8,13 @@ use yaml_serde::Value;
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct ConditionConfiguration
 {
-    /// The optional variable to check.
+    /// The variable to check.
     pub variable: Option<String>,
 
-    /// The optional operation to perform as a check.
+    /// The operation to perform as a check.
     pub operation: Option<String>,
 
-    /// The optional value to compare.
+    /// The value to compare.
     pub value: Option<Value>
 }
 

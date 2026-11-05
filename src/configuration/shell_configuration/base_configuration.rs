@@ -8,19 +8,19 @@ use super::shell_configuration::ShellConfiguration;
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct BaseConfiguration
 {
-    /// The optional [ShellConfiguration] instance for Bash.
+    /// The [ShellConfiguration] instance for Bash.
     pub bash: Option<ShellConfiguration>,
     
-    /// The optional [ShellConfiguration] instance for Zsh.
+    /// The [ShellConfiguration] instance for Zsh.
     pub zsh: Option<ShellConfiguration>,
 
-    /// The optional [ShellConfiguration] instance for Git Bash.
+    /// The [ShellConfiguration] instance for Git Bash.
     pub git_bash: Option<ShellConfiguration>,
 
-    /// The optional [ShellConfiguration] instance for PowerShell.
+    /// The [ShellConfiguration] instance for PowerShell.
     pub powershell: Option<ShellConfiguration>,
 
-    /// The optional [ShellConfiguration] instance for Cmd.
+    /// The [ShellConfiguration] instance for Cmd.
     pub cmd: Option<ShellConfiguration>
 }
 
@@ -35,13 +35,13 @@ impl Default for BaseConfiguration
         {
             bash: Some(ShellConfiguration
             {
-                setup: Some(r#"BURNOUT=$(command -v burnout); \
+                setup: Some(r#"BURNOUT=$(command -v burnout bash); \
 PS1="$($BURNOUT)"; \
 RPROMPT="$($BURNOUT right)"; \
 PS1_TRANSIENT="$($BURNOUT transient)"; \
-RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
+RPROMPT_TRANSIENT="$($BURNOUT right_transient)"; \
 PS2="$($BURNOUT continuation)" \
-PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window-title)\007"'"#.to_string())
+PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window_title)\007"'"#.to_string())
             }),
             zsh: Some(ShellConfiguration
             {
@@ -49,28 +49,28 @@ PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window-title)\007"'"#.to_string())
 promptinit \
 prompt transient \
 setopt transient_rprompt \
-BURNOUT=$(command -v burnout); \
+BURNOUT=$(command -v burnout zsh); \
 PROMPT="$($BURNOUT)"; \
 RPROMPT="$($BURNOUT right)"; \
 PROMPT_TRANSIENT="$($BURNOUT transient)"; \
-RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
+RPROMPT_TRANSIENT="$($BURNOUT right_transient)"; \
 PS2="$($BURNOUT continuation)" \
 precmd_functions+=(set_window_title); \
-function set_window_title(){{echo -ne "\033]0;$($BURNOUT window-title)\007"}}"#.to_string())
+function set_window_title(){{echo -ne "\033]0;$($BURNOUT window_title)\007"}}"#.to_string())
             }),
             git_bash: Some(ShellConfiguration
             {
-                setup: Some(r#"BURNOUT=$(command -v burnout.exe); \
+                setup: Some(r#"BURNOUT=$(command -v burnout.exe git_bash); \
 PS1=$($BURNOUT); \
 RPROMPT="$($BURNOUT right)"; \
 PS1_TRANSIENT="$($BURNOUT transient)"; \
-RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
+RPROMPT_TRANSIENT="$($BURNOUT right_transient)"; \
 PS2="$($BURNOUT continuation)" \
-PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window-title)\007"'"#.to_string())
+PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window_title)\007"'"#.to_string())
             }),
             powershell: Some(ShellConfiguration
             {
-                setup: Some(r#"[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; $burnout = (Get-Command burnout).Source; $PSContinuationPrompt = { & $burnout continuation }; function global:prompt { $host.UI.RawUI.WindowTitle = (& $burnout window-title); return & $burnout;}"#.to_string())
+                setup: Some(r#"[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; $burnout = (Get-Command burnout).Source; $PSContinuationPrompt = { & $burnout powershell continuation }; function global:prompt { $host.UI.RawUI.WindowTitle = (& $burnout powershell window_title); return & $burnout powershell;}"#.to_string())
             }),
             cmd: Some(ShellConfiguration
             {
@@ -80,19 +80,19 @@ end
 local prompt = clink.promptfilter(1)
 function prompt:filter(prompt)
 set_title(prompt)
-return io.popen("burnout"):read("*a")
+return io.popen("burnout cmd"):read("*a")
 end
 function prompt:rightfilter(prompt)
-return io.popen("burnout right"):read("*a")
+return io.popen("burnout cmd right"):read("*a")
 end
 function prompt:transientfilter(prompt)
-return io.popen("burnout transient"):read("*a")
+return io.popen("burnout cmd transient"):read("*a")
 end
 function prompt:transientrightfilter(prompt)
-return io.popen("burnout right-transient"):read("*a")
+return io.popen("burnout cmd right_transient"):read("*a")
 end
 function set_title(prompt)
-local title = io.popen("burnout window-title"):read("*a")
+local title = io.popen("burnout cmd window_title"):read("*a")
 if title ~= nil then
 console.settitle(title)
 end
@@ -148,21 +148,21 @@ mod tests
     {
         let configuration: BaseConfiguration = yaml_serde::from_str(r#"bash:
   setup: |-
-    BURNOUT=$(command -v burnout); \
+    BURNOUT=$(command -v burnout bash); \
     PS1="$($BURNOUT)"; \
     RPROMPT="$($BURNOUT right)"; \
     PS1_TRANSIENT="$($BURNOUT transient)"; \
-    RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
+    RPROMPT_TRANSIENT="$($BURNOUT right_transient)"; \
     PS2="$($BURNOUT continuation)" \
-    PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window-title)\007"'"#).expect("Failed to deserialise the partial configuration.");
+    PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window_title)\007"'"#).expect("Failed to deserialise the partial configuration.");
 
-        assert_eq!(configuration.bash.unwrap().setup, Some(r#"BURNOUT=$(command -v burnout); \
+        assert_eq!(configuration.bash.unwrap().setup, Some(r#"BURNOUT=$(command -v burnout bash); \
 PS1="$($BURNOUT)"; \
 RPROMPT="$($BURNOUT right)"; \
 PS1_TRANSIENT="$($BURNOUT transient)"; \
-RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
+RPROMPT_TRANSIENT="$($BURNOUT right_transient)"; \
 PS2="$($BURNOUT continuation)" \
-PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window-title)\007"'"#.to_string()));
+PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window_title)\007"'"#.to_string()));
         assert!(configuration.zsh.is_none());
         assert!(configuration.git_bash.is_none());
         assert!(configuration.powershell.is_none());
@@ -177,38 +177,38 @@ PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window-title)\007"'"#.to_string()));
     {
         let configuration: BaseConfiguration = yaml_serde::from_str(r#"bash:
   setup: |-
-    BURNOUT=$(command -v burnout); \
+    BURNOUT=$(command -v burnout bash); \
     PS1="$($BURNOUT)"; \
     RPROMPT="$($BURNOUT right)"; \
     PS1_TRANSIENT="$($BURNOUT transient)"; \
-    RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
+    RPROMPT_TRANSIENT="$($BURNOUT right_transient)"; \
     PS2="$($BURNOUT continuation)" \
-    PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window-title)\007"'
+    PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window_title)\007"'
 zsh:
   setup: |-
     autoload -Uz promptinit \
     promptinit \
     prompt transient \
     setopt transient_rprompt \
-    BURNOUT=$(command -v burnout); \
+    BURNOUT=$(command -v burnout zsh); \
     PROMPT="$($BURNOUT)"; \
     RPROMPT="$($BURNOUT right)"; \
     PROMPT_TRANSIENT="$($BURNOUT transient)"; \
-    RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
+    RPROMPT_TRANSIENT="$($BURNOUT right_transient)"; \
     PS2="$($BURNOUT continuation)" \
     precmd_functions+=(set_window_title); \
-    function set_window_title(){{echo -ne "\033]0;$($BURNOUT window-title)\007"}}
+    function set_window_title(){{echo -ne "\033]0;$($BURNOUT window_title)\007"}}
 git_bash:
   setup: |-
-    BURNOUT=$(command -v burnout.exe); \
+    BURNOUT=$(command -v burnout.exe git_bash); \
     PS1=$($BURNOUT); \
     RPROMPT="$($BURNOUT right)"; \
     PS1_TRANSIENT="$($BURNOUT transient)"; \
-    RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
+    RPROMPT_TRANSIENT="$($BURNOUT right_transient)"; \
     PS2="$($BURNOUT continuation)" \
-    PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window-title)\007"'
+    PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window_title)\007"'
 powershell:
-  setup: '[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; $burnout = (Get-Command burnout).Source; $PSContinuationPrompt = { & $burnout continuation }; function global:prompt { $host.UI.RawUI.WindowTitle = (& $burnout window-title); return & $burnout;}'
+  setup: '[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; $burnout = (Get-Command burnout).Source; $PSContinuationPrompt = { & $burnout powershell continuation }; function global:prompt { $host.UI.RawUI.WindowTitle = (& $burnout powershell window_title); return & $burnout powershell;}'
 cmd:
   setup: |-
     if (clink.version_encoded or 0) < 10020030 then
@@ -217,71 +217,71 @@ cmd:
     local prompt = clink.promptfilter(1)
     function prompt:filter(prompt)
     set_title(prompt)
-    return io.popen("burnout"):read("*a")
+    return io.popen("burnout cmd"):read("*a")
     end
     function prompt:rightfilter(prompt)
-    return io.popen("burnout right"):read("*a")
+    return io.popen("burnout cmd right"):read("*a")
     end
     function prompt:transientfilter(prompt)
-    return io.popen("burnout transient"):read("*a")
+    return io.popen("burnout cmd transient"):read("*a")
     end
     function prompt:transientrightfilter(prompt)
-    return io.popen("burnout right-transient"):read("*a")
+    return io.popen("burnout cmd right_transient"):read("*a")
     end
     function set_title(prompt)
-    local title = io.popen("burnout window-title"):read("*a")
+    local title = io.popen("burnout cmd window_title"):read("*a")
     if title ~= nil then
     console.settitle(title)
     end
     end
 "#).expect("Failed to parse valid YAML.");
 
-        assert_eq!(configuration.bash.unwrap().setup, Some(r#"BURNOUT=$(command -v burnout); \
+        assert_eq!(configuration.bash.unwrap().setup, Some(r#"BURNOUT=$(command -v burnout bash); \
 PS1="$($BURNOUT)"; \
 RPROMPT="$($BURNOUT right)"; \
 PS1_TRANSIENT="$($BURNOUT transient)"; \
-RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
+RPROMPT_TRANSIENT="$($BURNOUT right_transient)"; \
 PS2="$($BURNOUT continuation)" \
-PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window-title)\007"'"#.to_string()));
+PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window_title)\007"'"#.to_string()));
         assert_eq!(configuration.zsh.unwrap().setup, Some(r#"autoload -Uz promptinit \
 promptinit \
 prompt transient \
 setopt transient_rprompt \
-BURNOUT=$(command -v burnout); \
+BURNOUT=$(command -v burnout zsh); \
 PROMPT="$($BURNOUT)"; \
 RPROMPT="$($BURNOUT right)"; \
 PROMPT_TRANSIENT="$($BURNOUT transient)"; \
-RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
+RPROMPT_TRANSIENT="$($BURNOUT right_transient)"; \
 PS2="$($BURNOUT continuation)" \
 precmd_functions+=(set_window_title); \
-function set_window_title(){{echo -ne "\033]0;$($BURNOUT window-title)\007"}}"#.to_string()));
-        assert_eq!(configuration.git_bash.unwrap().setup, Some(r#"BURNOUT=$(command -v burnout.exe); \
+function set_window_title(){{echo -ne "\033]0;$($BURNOUT window_title)\007"}}"#.to_string()));
+        assert_eq!(configuration.git_bash.unwrap().setup, Some(r#"BURNOUT=$(command -v burnout.exe git_bash); \
 PS1=$($BURNOUT); \
 RPROMPT="$($BURNOUT right)"; \
 PS1_TRANSIENT="$($BURNOUT transient)"; \
-RPROMPT_TRANSIENT="$($BURNOUT right-transient)"; \
+RPROMPT_TRANSIENT="$($BURNOUT right_transient)"; \
 PS2="$($BURNOUT continuation)" \
-PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window-title)\007"'"#.to_string()));
-        assert_eq!(configuration.powershell.unwrap().setup, Some(r#"[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; $burnout = (Get-Command burnout).Source; $PSContinuationPrompt = { & $burnout continuation }; function global:prompt { $host.UI.RawUI.WindowTitle = (& $burnout window-title); return & $burnout;}"#.to_string()));
+PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window_title)\007"'"#.to_string()));
+        assert_eq!(configuration.powershell.unwrap().setup, Some(r#"[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; $burnout = (Get-Command burnout).Source; $PSContinuationPrompt = { & $burnout powershell continuation }; function global:prompt { $host.UI.RawUI.WindowTitle = (& $burnout powershell window_title); return & $burnout powershell;}"#.to_string()));
         assert_eq!(configuration.cmd.unwrap().setup, Some(r#"if (clink.version_encoded or 0) < 10020030 then
 error("Burnout requires Clink v1.2.30 or later.")
 end
 local prompt = clink.promptfilter(1)
 function prompt:filter(prompt)
 set_title(prompt)
-return io.popen("burnout"):read("*a")
+return io.popen("burnout cmd"):read("*a")
 end
 function prompt:rightfilter(prompt)
-return io.popen("burnout right"):read("*a")
+return io.popen("burnout cmd right"):read("*a")
 end
 function prompt:transientfilter(prompt)
-return io.popen("burnout transient"):read("*a")
+return io.popen("burnout cmd transient"):read("*a")
 end
 function prompt:transientrightfilter(prompt)
-return io.popen("burnout right-transient"):read("*a")
+return io.popen("burnout cmd right_transient"):read("*a")
 end
 function set_title(prompt)
-local title = io.popen("burnout window-title"):read("*a")
+local title = io.popen("burnout cmd window_title"):read("*a")
 if title ~= nil then
 console.settitle(title)
 end

@@ -7,7 +7,7 @@ use serde::{Serialize, Deserialize};
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct ShellConfiguration
 {
-    /// The optional setup script.
+    /// The setup script.
     pub setup: Option<String>
 }
 
@@ -30,7 +30,7 @@ mod tests
     #[test]
     fn test_yaml_deserialisation_full_configuration()
     {
-        let setup_line = r#"BURNOUT=$(command -v burnout); \
+        let setup_line = r#"BURNOUT=$(command -v burnout bash); \
 PS1="$($BURNOUT)"; \
 RPROMPT="$($BURNOUT right)"; \
 PS1_TRANSIENT="$($BURNOUT transient)"; \
@@ -39,7 +39,7 @@ PS2="$($BURNOUT continuation)" \
 PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window-title)\007"'"#;
 
         let setup = r#"setup: |-
-  BURNOUT=$(command -v burnout); \
+  BURNOUT=$(command -v burnout bash); \
   PS1="$($BURNOUT)"; \
   RPROMPT="$($BURNOUT right)"; \
   PS1_TRANSIENT="$($BURNOUT transient)"; \
@@ -71,7 +71,7 @@ PROMPT_COMMAND='echo -ne "\033]0;$($BURNOUT window-title)\007"'"#;
     #[test]
     fn test_yaml_serialisation_and_deserialisation_full_configuration()
     {
-        let setup = r#"BURNOUT=$(command -v burnout); \
+        let setup = r#"BURNOUT=$(command -v burnout bash); \
 PS1="$($BURNOUT)"; \
 RPROMPT="$($BURNOUT right)"; \
 PS1_TRANSIENT="$($BURNOUT transient)"; \

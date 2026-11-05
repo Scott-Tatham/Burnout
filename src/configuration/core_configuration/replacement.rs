@@ -7,10 +7,10 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct ReplacementConfiguration
 {
-    /// The optional target text to replace.
+    /// The target text to replace.
     pub target: Option<String>,
 
-    /// The optional value to replace the target text with.
+    /// The value to replace the target text with.
     pub value: Option<String>
 }
 

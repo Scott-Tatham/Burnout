@@ -3,29 +3,25 @@
  */
 use serde::{Deserialize, Serialize};
 use super::shells::shell_configuration::ShellConfiguration;
-use super::module::ModuleConfiguration;
 
 /// Stores the base configuration.
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct BaseConfiguration
 {
-    /// The optional [ShellConfiguration] instance for Bash.
+    /// The [ShellConfiguration] instance for Bash.
     pub bash: Option<ShellConfiguration>,
 
-    /// The optional [ShellConfiguration] instance for Zsh.
+    /// The [ShellConfiguration] instance for Zsh.
     pub zsh: Option<ShellConfiguration>,
 
-    /// The optional [ShellConfiguration] instance for Git Bash.
+    /// The [ShellConfiguration] instance for Git Bash.
     pub git_bash: Option<ShellConfiguration>,
 
-    /// The optional [ShellConfiguration] instance for PowerShell.
+    /// The [ShellConfiguration] instance for PowerShell.
     pub powershell: Option<ShellConfiguration>,
 
-    /// The optional [ShellConfiguration] instance for Cmd.
-    pub cmd: Option<ShellConfiguration>,
-
-    /// The optional collection of [ModuleConfiguration] instances.
-    pub modules: Option<Vec<ModuleConfiguration>>
+    /// The [ShellConfiguration] instance for Cmd.
+    pub cmd: Option<ShellConfiguration>
 }
 
 /// The implementation of the [Default] trait for the [BaseConfiguration].
@@ -43,7 +39,6 @@ impl Default for BaseConfiguration
             git_bash: Some(ShellConfiguration::default()),
             powershell: Some(ShellConfiguration::default()),
             cmd: Some(ShellConfiguration::default()),
-            modules: Some(Vec::default())
         }
     }
 }
@@ -65,7 +60,6 @@ mod tests
         assert!(configuration.git_bash.is_some());
         assert!(configuration.powershell.is_some());
         assert!(configuration.cmd.is_some());
-        assert!(configuration.modules.is_some());
     }
 
     /// Tests the deserialisation of an empty configuration as YAML.
@@ -79,7 +73,6 @@ mod tests
         assert!(configuration.git_bash.is_none());
         assert!(configuration.powershell.is_none());
         assert!(configuration.cmd.is_none());
-        assert!(configuration.modules.is_none());
     }
 
     /// Tests the serialisation and deserialisation of an empty configuration as YAML.
@@ -92,8 +85,7 @@ mod tests
             zsh: None,
             git_bash: None,
             powershell: None,
-            cmd: None,
-            modules: None
+            cmd: None
         };
 
         let deserialised: BaseConfiguration = yaml_serde::from_str(&yaml_serde::to_string(&configuration).expect("Failed to serialise the empty configuration.")).expect("Failed to deserialise the empty configuration.");
@@ -103,6 +95,5 @@ mod tests
         assert!(deserialised.git_bash.is_none());
         assert!(deserialised.powershell.is_none());
         assert!(deserialised.cmd.is_none());
-        assert!(deserialised.modules.is_none());
     }
 }

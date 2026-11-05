@@ -9,19 +9,22 @@ use super::condition::ConditionConfiguration;
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct SegmentConfiguration
 {
-    /// The optional prefix to add to the segment.
+    /// The prefix to add to the segment.
     pub prefix: Option<String>,
 
-    /// The optional suffix to add to the segment.
+    /// The suffix to add to the segment.
     pub suffix: Option<String>,
 
-    /// The optional variable to replace with a value in the segment.
+    /// The content value of the segment.
+    pub content: Option<String>,
+
+    /// The variable to replace with a value in the segment.
     pub variable: Option<String>,
 
-    /// The option [StyleConfiguration] instance.
+    /// The [StyleConfiguration] instance.
     pub style: Option<StyleConfiguration>,
 
-    /// The option [ConditionConfiguration] instance.
+    /// The [ConditionConfiguration] instance.
     pub condition: Option<ConditionConfiguration>
 }
 
@@ -37,6 +40,7 @@ impl Default for SegmentConfiguration
         {
             prefix: None,
             suffix: None,
+            content: None,
             variable: None,
             style: Some(StyleConfiguration::default()),
             condition: Some(ConditionConfiguration::default())
@@ -97,6 +101,7 @@ mod tests
         {
             prefix: None,
             suffix: None,
+            content: None,
             variable: None,
             style: None,
             condition: None
@@ -117,8 +122,9 @@ mod tests
     {
         let configuration = SegmentConfiguration
         {
-            prefix: Some("Test Prefix".to_string()),
+            prefix: None,
             suffix: None,
+            content: Some("Test Content".to_string()),
             variable: None,
             style: None,
             condition: None
@@ -126,7 +132,8 @@ mod tests
 
         let deserialised: SegmentConfiguration = yaml_serde::from_str(&yaml_serde::to_string(&configuration).expect("Failed to serialise the partial configuration.")).expect("Failed to deserialise the partial configuration.");
 
-        assert_eq!(deserialised.prefix, Some("Test Prefix".to_string()));
+        assert_eq!(deserialised.content, Some("Test Content".to_string()));
+        assert!(deserialised.prefix.is_none());
         assert!(deserialised.suffix.is_none());
         assert!(deserialised.variable.is_none());
         assert!(deserialised.style.is_none());
@@ -142,6 +149,7 @@ mod tests
 
         assert_eq!(configuration.prefix, deserialised.prefix);
         assert_eq!(configuration.suffix, deserialised.suffix);
+        assert_eq!(configuration.content, deserialised.content);
         assert_eq!(configuration.variable, deserialised.variable);
         assert_eq!(configuration.style, deserialised.style);
         assert_eq!(configuration.condition, deserialised.condition);
